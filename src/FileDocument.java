@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class FileDocument {
@@ -17,7 +19,9 @@ public class FileDocument {
 	 */
 	public static void main(String[] args) {
 
-		File folder = openTmp("/home/eresia/Documents");
+		// TEST IO (READ/WRITE OBJECT)
+		
+		/*File folder = openTmp("/home/eresia/Documents");
 		ArrayList<Document> docs1 = new ArrayList<Document>();
 		ArrayList<Document> docs2;
 		for (int i = 0; i < 5; i++) {
@@ -33,7 +37,12 @@ public class FileDocument {
 			} catch (NullPointerException e) {
 				System.out.println("docs2 null");
 			}
-		}
+		}*/
+		
+		// TEST isODT
+		
+		/*String path = ("/home/eresia/Documents/S3/exemple.odt");
+		System.out.println(isODT(path));*/
 	}
 
 	public static ArrayList read(File folder) {
@@ -122,6 +131,18 @@ public class FileDocument {
 			file.delete();
 		} else {
 			file.delete();
+		}
+	}
+	
+	public static boolean isODT(String path){
+	
+		try{
+			Path pathTest = new File(path).toPath();
+			System.out.println(Files.probeContentType(pathTest));
+			return Files.probeContentType(pathTest).equals("application/vnd.oasis.opendocument.text");
+		}catch(IOException e){
+			e.printStackTrace();
+			return false;
 		}
 	}
 
