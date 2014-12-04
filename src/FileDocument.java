@@ -43,6 +43,10 @@ public class FileDocument {
 		
 		/*String path = ("/home/eresia/Documents/S3/exemple.odt");
 		System.out.println(isODT(path));*/
+		
+		// TEST recherche
+		String path = ("/home/eresia/Documents/S3/testProgramme");
+		System.out.println(searchODT(path));
 	}
 
 	public static ArrayList read(File folder) {
@@ -143,6 +147,32 @@ public class FileDocument {
 		}catch(IOException e){
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	public static ArrayList<Document> searchODT(String path){
+		ArrayList<String> docs = new ArrayList<String>();
+		ArrayList<Document> odt = new ArrayList<Document>();
+		File folder = new File(path);
+		listDocument(folder, docs);
+		for(String docAct : docs){
+			if(isODT(docAct)){
+				odt.add(new Document(docAct));
+			}
+		}
+		
+		
+		return odt;
+	}
+	
+	public static void listDocument(File folder, ArrayList<String> docs){
+		if(!folder.isDirectory()){
+			docs.add(folder.getAbsolutePath());
+		}
+		else{
+			for(int i = 0; i < folder.list().length; i++){
+				listDocument(new File(folder.getAbsolutePath() + File.separator + folder.list()[i]), docs);
+			}
 		}
 	}
 
