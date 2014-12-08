@@ -28,8 +28,8 @@ public class FileDocument {
 			docs1.add(new Document("coucou " + Integer.toString(i)));
 		}
 		// System.out.println(docs1);
-		if (write(docs1, folder)) {
-			docs2 = (ArrayList<Document>) read(folder);
+		if (writeObject(docs1, folder)) {
+			docs2 = (ArrayList<Document>) readObject(folder);
 			try {
 				for (Document doc : docs2) {
 					System.out.println(doc.toString());
@@ -49,7 +49,7 @@ public class FileDocument {
 		System.out.println(searchODT(path));
 	}
 
-	public static ArrayList read(File folder) {
+	public static ArrayList readObject(File folder) {
 		ObjectInputStream ois;
 		ArrayList objs = new ArrayList();
 		Object reading;
@@ -81,7 +81,7 @@ public class FileDocument {
 		}
 	}
 
-	public static boolean write(ArrayList objs, File folder) {
+	public static boolean writeObject(ArrayList objs, File folder) {
 		ObjectOutputStream oos;
 		if (folder.isDirectory()) {
 			try {
