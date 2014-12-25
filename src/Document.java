@@ -6,7 +6,7 @@ public class Document implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private String path;
-	private ArrayList<Title> attributes = new ArrayList<Title>();
+	private ArrayList<Title> titles = new ArrayList<Title>();
 	
 	public Document(String path)
 	{
@@ -22,8 +22,8 @@ public class Document implements Serializable{
 		return path;
 	}
 	
-	public ArrayList<Title> getAttribute(){
-		return attributes;
+	public ArrayList<Title> getTitles(){
+		return titles;
 	}
 
 	public void setPath(String path) {
@@ -32,7 +32,7 @@ public class Document implements Serializable{
 
 	public String toString()
 	{
-		return "path : " + path + "\n Attributes : " + attributes.toString();
+		return "path : " + path + "\n Titles : " + titles.toString();
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class Document implements Serializable{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((attributes == null) ? 0 : attributes.hashCode());
+				+ ((titles == null) ? 0 : titles.hashCode());
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
 		return result;
 	}
@@ -54,10 +54,10 @@ public class Document implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Document other = (Document) obj;
-		if (attributes == null) {
-			if (other.attributes != null)
+		if (titles == null) {
+			if (other.titles != null)
 				return false;
-		} else if (!attributes.equals(other.attributes))
+		} else if (!titles.equals(other.titles))
 			return false;
 		if (path == null) {
 			if (other.path != null)
