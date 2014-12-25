@@ -6,7 +6,7 @@ public class Document implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private String path;
-	private ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+	private ArrayList<Title> attributes = new ArrayList<Title>();
 	
 	public Document(String path)
 	{
@@ -22,7 +22,7 @@ public class Document implements Serializable{
 		return path;
 	}
 	
-	public ArrayList<Attribute> getAttribute(){
+	public ArrayList<Title> getAttribute(){
 		return attributes;
 	}
 
