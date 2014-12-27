@@ -19,7 +19,9 @@ public class Folder {
 		this.path = path;
 	}
 	
-	
+	public String getPath(){
+		return path;
+	}
 	
 	//FONCTION IO*****************************************************************************************************************************
 	

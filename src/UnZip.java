@@ -14,7 +14,7 @@ public class UnZip {
 	 * 
 	 * @param zipFile
 	 *            input zip file
-	 * @param output
+	 * @param outputFolder
 	 *            zip file output folder
 	 */
 	public void unZipIt(String zipFile, String outputFolder) {
