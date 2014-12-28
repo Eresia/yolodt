@@ -1,16 +1,27 @@
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 //Classe principale de l'interface grapique
 public class GraphInter extends JFrame{
@@ -19,7 +30,9 @@ public class GraphInter extends JFrame{
 	private JButton searchButton;
 	private JButton addButton;
 	private JTextField keyWords;
-	private JTextArea results;
+	// FLORIAN HELPS : Utilisation JList pratique. Wesh
+	private JList<String> results;
+	private JTextArea errorArea;
 	
 	private JPanel mainPanel;
 	
@@ -41,6 +54,13 @@ public class GraphInter extends JFrame{
 		
 		buildFen(title);
 		buildInter();
+		//requestFocus();
+		
+		ArrayList<Document> docs = new ArrayList<Document>();
+		docs.add(new Document("/home/eresia/Documents/S3/Test/tests/src/content.odt"));
+		docs.add(new Document("machine"));
+		printODT(docs);
+		
 	}
 	
 	//Création de la fenêtre
@@ -72,23 +92,33 @@ public class GraphInter extends JFrame{
 		addButton = new JButton("+");
 		addButton.addActionListener(new ActionAdd());
 		keyWords = new JTextField();
-		results = new JTextArea();
-		results.setEditable(false);
+		keyWords.addActionListener(new ActionUpdate());
+		results = new JList<String>();
+		results.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		results.setLayoutOrientation(JList.VERTICAL);
+		results.addKeyListener(new ActionEnterList());
+		results.addMouseListener(new ActionMouseList());
+		errorArea = new JTextArea();
+		errorArea.setEditable(false);
 		
 		GridBagConstraints pos = new GridBagConstraints();
-		pos.insets.left = margin; pos.insets.bottom = margin;
+		pos.insets.left = margin; pos.insets.bottom = interMargin; pos.insets.right = margin;
 		pos.gridy = 0; pos.gridx = 0;
 		pos.fill = GridBagConstraints.BOTH;
 		pos.weightx = 1;
-		pos.weighty = 1;
-		pos.gridwidth = 2;
+		pos.weighty = 0.9;
+		//pos.gridwidth = 2;
 		botPanel.add(results, pos);
+		pos.insets.bottom = margin;
+		pos.gridy = 1;
+		pos.weighty = 0.1;
+		botPanel.add(errorArea, pos);
 			
 		LayoutFolder folderInit = new LayoutFolder();		
 		folderInit.addInPanel(topPanel, 0);
 		updateTop(1);
 		
-		setContentPane(mainPanel);
+		refresh();
 	}
 	
 	//Mise à jour des boutons "+", "Update", "Search" et de la zone "Mot clés"
@@ -123,6 +153,39 @@ public class GraphInter extends JFrame{
 		topPanel.add(searchButton, pos);
 	}
 	
+	public void printODT(ArrayList<Document> docs){
+		DefaultListModel<String> model = new DefaultListModel<String>();
+		for(Document d : docs){
+			model.addElement(d.getPath());
+		}
+		results.setModel(model);
+		refresh();
+	}
+	
+	public void openODT(String path){
+	    if(Desktop.isDesktopSupported()){
+	    	if(Desktop.getDesktop().isSupported(java.awt.Desktop.Action.OPEN)){
+		    	try {
+		    		java.awt.Desktop.getDesktop().open(new File(path));
+		    	} catch (IOException e) {
+		    		errorArea.setText(e.getMessage());
+		    		refresh();
+				} catch (IllegalArgumentException e){
+		    		errorArea.setText(e.getMessage());
+		    		refresh();
+				}
+	    	} else {
+	    		errorArea.setText("Function not supported by your OS");
+	    	}
+	    }else {
+	    	errorArea.setText("Function not supported by your OS");
+	    }
+	}
+	
+	public void refresh(){
+		setContentPane(mainPanel);
+	}
+	
 	//Classe représentant une demande de dossier (créée quand appuis sur le boutton "+")
 	public class LayoutFolder {
 		
@@ -132,6 +195,7 @@ public class GraphInter extends JFrame{
 		
 		public LayoutFolder(){
 			folder = new JTextField();
+			folder.addActionListener(new ActionUpdate());
 			searchDirectory = new JButton("Folder");
 			searchDirectory.addActionListener(new ActionDirectory(folder));
 			rem = new JButton("-");
@@ -184,7 +248,7 @@ public class GraphInter extends JFrame{
 		public void actionPerformed(ActionEvent arg0) {
 			LayoutFolder newFolder = new LayoutFolder();
 			newFolder.addInPanel(topPanel, nbFolderCreate);
-			setContentPane(mainPanel);
+			refresh();
 		}
 		
 	}
@@ -201,7 +265,7 @@ public class GraphInter extends JFrame{
 		public void actionPerformed(ActionEvent arg0) {
 			if(folders.size() > 1){
 				folder.removeInPanel(topPanel);
-				setContentPane(mainPanel);
+				refresh();
 			}
 			
 		}
@@ -242,6 +306,64 @@ public class GraphInter extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			//A finir (Provoque la mise à jour)
+			
+		}
+		
+	}
+	
+	public class ActionEnterList implements KeyListener{
+
+		@Override
+		public void keyPressed(KeyEvent arg0) {
+			if(arg0.getKeyCode() == KeyEvent.VK_ENTER){
+				openODT(results.getSelectedValue());
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void keyTyped(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	public class ActionMouseList implements MouseListener{
+
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			if (arg0.getClickCount() == 2) {
+			    openODT(results.getSelectedValue());
+			}
+		}
+	
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) {
+			// TODO Auto-generated method stub
 			
 		}
 		
