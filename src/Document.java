@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 
 public class Document implements Serializable{
@@ -13,7 +14,7 @@ public class Document implements Serializable{
 	{
 		this.path = path;
 		this.weight = 0;
-		parse(path);
+		//parse(path);
 	}
 	
 	public void parse(String path){
@@ -21,11 +22,26 @@ public class Document implements Serializable{
 		//titles = p.getText();
 	}
 	
-	public void searchWords(ArrayList<String> words){
+	// LOUIS HELPS : Penser aux opérateurs. Wesh
+	public void searchWords(ArrayList<String> words, boolean isOROp){
+		boolean[] used = new boolean[words.size()];
+		for(int i = 0 ; i < words.size(); i++){
+			used[i] = false;
+		}
 		for(Title t : titles){
-			for(String w : words){
-				if(t.getTitle().contains(w)){
+			ListIterator lI = words.listIterator();
+			while(lI.hasNext()){
+				int nextInd = lI.nextIndex();
+				if(t.getTitle().contains((String)lI.next())){
 					weight += 6 - t.getHeight();
+					used[nextInd] = true;
+				}
+			}
+		}
+		if(!isOROp){
+			for(int i = 0; i < words.size(); i++){
+				if(used[i] == false){
+					weight = 0;
 				}
 			}
 		}
