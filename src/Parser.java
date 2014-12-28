@@ -20,7 +20,7 @@ public class Parser {
 	NodeList textP; //Text in test:p Elements
 	NodeList titleH; //Title in text:h Elements
 	NodeList titleP; //Title in text:p Elements
-	ArrayList<Title> titles;
+	ArrayList<Title> titles; //Contains parsed titles
 	
 	public Parser(String toParse){
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -36,38 +36,31 @@ public class Parser {
 		}
 		catch(IOException e){
 			e.printStackTrace();
-		} // On crée tout le bordel pour parser.
-		root = document.getDocumentElement(); //On choppe la racine.
-		rootNode = root.getChildNodes(); //Les enfants de la racine sémignon.
-		grepTitles();
+		} // Creating the factory and catching eventual errors.
+		root = document.getDocumentElement(); // We'll navigate through this var
+		grepTitles(); 
 	}
 	
 	public void grepTitles(){
 		titles = new ArrayList<Title>();
-		textP = root.getElementsByTagName("text:p");
+		textP = root.getElementsByTagName("text:p"); //We get all the "text:p" and "text:h" elements recursively
 		textH = root.getElementsByTagName("text:h");
-		for(int i = 0; i<textP.getLength(); i++){
+		for(int i = 0; i<textP.getLength(); i++){ //We compare each "text:p" field in the document to what we expect
 			Element title = (Element) textP.item(i);			
-			if(title.getAttribute("text:style-name").equals("P1")){
-				//System.out.println("height = 0");
-				//System.out.println(title.getTextContent());
-				titles.add(new Title(title.getTextContent(), 0));
-				//Foutre dans l'AL : String & height=0
+			if(title.getAttribute("text:style-name").equals("P1")){ //P1 is the style-name value for grand titles
+				titles.add(new Title(title.getTextContent(), 0)); /* When conditions meet, we store the interesting String on an ArrayList declared 
+																   * previously, with a height value for later search purpose.*/
 			}
-			if(title.getAttribute("text:style-name").equals("Subtitle")){
-				//System.out.println("height = 0");
-				//System.out.println(title.getTextContent());
+			if(title.getAttribute("text:style-name").equals("Subtitle")){ //Same idea
 				titles.add(new Title(title.getTextContent(), 1));
-				//Foutre dans l'AL : String & height=0
-			}
-			//System.out.println(textP.item(i).getTextContent());	
+			}	
 		}
 		for (int i = 0; i < textH.getLength(); i++) {
 			Element title = (Element) textH.item(i);
-			int height = Integer.parseInt(title.getAttribute("text:outline-level"));
-//			System.out.println(title.getAttribute("text:outline-level"));
-//			System.out.println(textH.item(i).getTextContent());
-			titles.add(new Title(title.getTextContent(), height+1));
+			int height = Integer.parseInt(title.getAttribute("text:outline-level")); /* Depending on the importance of the title, the field text:outline-level contains 
+			 																		  * a number. Here we convert this number to an int, because getAttribute's type is
+			 																		  * String.*/
+			titles.add(new Title(title.getTextContent(), height+1)); //We add 1 here because of text:h's height.
 		}
 	}
 	public ArrayList<Title> getTitles(){
@@ -81,10 +74,5 @@ public class Parser {
 			ret+=(t.toString()+"\n");
 		}
 		return ret;
-	}
-	
-		//TODO : La même avec les titres en p. ( En gros chopper un documentTitle. e du
-		//choppe les titres des docs
-		// VINCENT HELPS : getElementsByTagName marche récursivement, appelle le dans tout le office:document-content. Wesh
-		// A stocker : Dans l'arrayList, le premier item c'est le titre principal, de hauteur 0, et après on met tout le reste. 
+	} 
 }
