@@ -6,16 +6,29 @@ public class Document implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private String path;
-	private ArrayList<Title> titles = new ArrayList<Title>();
+	private int weight;
+	private ArrayList<Title> titles;
 	
-	public Document(String path)
+	public Document(String path)	
 	{
 		this.path = path;
+		this.weight = 0;
 		parse(path);
 	}
 	
 	public void parse(String path){
-		
+		Parser p = new Parser(path);
+		//titles = p.getText();
+	}
+	
+	public void searchWords(ArrayList<String> words){
+		for(Title t : titles){
+			for(String w : words){
+				if(t.getTitle().contains(w)){
+					weight += 6 - t.getHeight();
+				}
+			}
+		}
 	}
 	
 	public String getPath() {

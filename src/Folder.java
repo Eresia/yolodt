@@ -39,7 +39,7 @@ public class Folder {
 			}
 			return folder;
 		} catch (Exception e) {
-			System.out.println("Erreur sur openTmp");
+			System.out.println("Erreur sur createTmp");
 			return null;
 		}
 
