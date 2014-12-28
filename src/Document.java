@@ -19,7 +19,7 @@ public class Document implements Serializable{
 	
 	public void parse(String path){
 		Parser p = new Parser(path);
-		//titles = p.getText();
+		titles = p.getTitles();
 	}
 	
 	// LOUIS HELPS : Penser aux opérateurs. Wesh
