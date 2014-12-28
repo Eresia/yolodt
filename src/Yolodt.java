@@ -13,9 +13,9 @@ public class Yolodt {
 //		File tmp = folderToStudy.createTmp(folderToStudy.getPath());
 //		ArrayList<Document> odtToStudy = folderToStudy.searchODT(folderToStudy.getPath()); //On choppe les ODT dedans
 //		
-		Parser p = new Parser("res/content.xml");
-		System.out.println(p);
-		
+		Document d = new Document("res/content.odt");
+		d.extractTitles();
+		System.out.println(d);
 	}
 }
  

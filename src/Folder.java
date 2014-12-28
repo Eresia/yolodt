@@ -26,7 +26,7 @@ public class Folder {
 	//FONCTION IO*****************************************************************************************************************************
 	
 	//Crée un dossier tmp dans le path (S'il esxiste déja on le supprime et on le recréé
-	public File createTmp(String path) {
+	public File createTmp() { //TODO: voir avec createTempDirectory
 		File folder;
 
 		try {
@@ -56,7 +56,9 @@ public class Folder {
 				odt.add(new Document(docAct));
 			}
 		}
-		
+		if(!odt.isEmpty()){
+			createTmp();
+		}
 		
 		return odt;
 	}
