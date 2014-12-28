@@ -1,4 +1,4 @@
-
+//Test de l'interface graphique
 public class TestGUI {
 
 	/**

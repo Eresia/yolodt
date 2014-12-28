@@ -6,12 +6,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-
+//Classe principale de l'interface grapique
 public class GraphInter extends JFrame{
 	
 	private JButton updateButton;
@@ -38,11 +39,12 @@ public class GraphInter extends JFrame{
 	public GraphInter(String title){
 		super();
 		
-		buildBase(title);
+		buildFen(title);
 		buildInter();
 	}
 	
-	public void buildBase(String title){
+	//Création de la fenêtre
+	public void buildFen(String title){
 		setTitle(title);
 		setSize(sizeX, sizeY);
 		setLocationRelativeTo(null);
@@ -50,6 +52,7 @@ public class GraphInter extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
+	//Création de l'interface
 	public void buildInter(){
 		
 		mainPanel = new JPanel();
@@ -65,8 +68,6 @@ public class GraphInter extends JFrame{
 		updateButton = new JButton("Import/Update");
 		updateButton.addActionListener(new ActionUpdate());
 		searchButton = new JButton("Search");
-		searchButton.setMinimumSize(updateButton.getMinimumSize());
-		searchButton.setPreferredSize(updateButton.getPreferredSize());
 		searchButton.addActionListener(new ActionSearch());
 		addButton = new JButton("+");
 		addButton.addActionListener(new ActionAdd());
@@ -74,20 +75,9 @@ public class GraphInter extends JFrame{
 		results = new JTextArea();
 		results.setEditable(false);
 		
-		
 		GridBagConstraints pos = new GridBagConstraints();
-		pos.insets.left = margin; 
-		pos.gridy = 0; pos.gridx = 0;
-		pos.weightx = 0.9;
-		//pos.weighty = 0.1;
-		pos.fill = GridBagConstraints.HORIZONTAL;
-		botPanel.add(keyWords, pos);
-		pos.insets.left = interMargin; pos.insets.right = margin;
-		pos.gridx = 1;
-		pos.weightx = 0.1;
-		botPanel.add(searchButton, pos);
 		pos.insets.left = margin; pos.insets.bottom = margin;
-		pos.gridy = 1; pos.gridx = 0;
+		pos.gridy = 0; pos.gridx = 0;
 		pos.fill = GridBagConstraints.BOTH;
 		pos.weightx = 1;
 		pos.weighty = 1;
@@ -96,35 +86,54 @@ public class GraphInter extends JFrame{
 			
 		LayoutFolder folderInit = new LayoutFolder();		
 		folderInit.addInPanel(topPanel, 0);
-		updateUpdateButtons(1);
+		updateTop(1);
 		
 		setContentPane(mainPanel);
 	}
 	
-	public void updateUpdateButtons(int posY){
+	//Mise à jour des boutons "+", "Update", "Search" et de la zone "Mot clés"
+	public void updateTop(int posY){
 		GridBagConstraints pos = new GridBagConstraints();
 		
 		topPanel.remove(addButton);
 		topPanel.remove(updateButton);
+		topPanel.remove(keyWords);
+		topPanel.remove(searchButton);
 		
-		pos.insets.left = margin;
+		pos.insets.left = margin; pos.insets.right = 0;
 		pos.gridy = posY; pos.gridx = 0;
 		pos.weightx = 0.9;
+		pos.gridwidth = 2;
 		pos.fill = GridBagConstraints.HORIZONTAL;
 		topPanel.add(addButton, pos);
 		pos.insets.left = interMargin; pos.insets.right = margin;
-		pos.gridx = 1;
+		pos.gridx = 2;
 		pos.weightx = 0.1;
+		pos.gridwidth = 1;
 		topPanel.add(updateButton, pos);
+		pos.insets.left = margin; pos.insets.right = 0;
+		pos.gridy = posY + 1; pos.gridx = 0;
+		pos.weightx = 0.9;
+		pos.gridwidth = 2;
+		topPanel.add(keyWords, pos);
+		pos.insets.left = interMargin; pos.insets.right = margin;
+		pos.gridx = 2;
+		pos.weightx = 0.1;
+		pos.gridwidth = 1;
+		topPanel.add(searchButton, pos);
 	}
 	
+	//Classe représentant une demande de dossier (créée quand appuis sur le boutton "+")
 	public class LayoutFolder {
 		
 		private JTextField folder;
+		private JButton searchDirectory;
 		private JButton rem; 
 		
 		public LayoutFolder(){
 			folder = new JTextField();
+			searchDirectory = new JButton("Folder");
+			searchDirectory.addActionListener(new ActionDirectory(folder));
 			rem = new JButton("-");
 			rem.addActionListener(new ActionRem(this));
 		}
@@ -133,6 +142,7 @@ public class GraphInter extends JFrame{
 			return folder.getText();
 		}
 		
+		//Ajoute la ligne dans la fenêtre
 		public void addInPanel(JPanel panel, int posY){
 			GridBagConstraints pos = new GridBagConstraints();
 			folders.add(this);
@@ -141,29 +151,36 @@ public class GraphInter extends JFrame{
 			pos.insets.left = margin; 
 			pos.gridy = posY;
 			pos.gridx = 0;
-			pos.weightx = 0.9;
+			pos.weightx = 0.8;
 			panel.add(folder, pos);
-			pos.insets.left = interMargin; pos.insets.right = margin;
+			pos.insets.left = interMargin; pos.insets.right = 0;
 			pos.gridx = 1;
 			pos.weightx = 0.1;
+			panel.add(searchDirectory, pos);
+			pos.insets.right = margin;
+			pos.gridx = 2;
+			pos.weightx = 0.1;
 			panel.add(rem, pos);
-			updateUpdateButtons(posY + 1);
+			updateTop(posY + 1);
 		}
 		
+		//Suprimer la ligne de la fenêtre
 		public void removeInPanel(JPanel panel){
 			panel.remove(folder);
+			panel.remove(searchDirectory);
 			panel.remove(rem);
 			folders.remove(this);
 		}
 		
 		public String toString(){
-			return "JTextField : " + folder.toString() + "\nJButton : " + rem.toString();
+			return "JTextField : " + folder.toString() + "JButton dir: " + searchDirectory.toString() + "\nJButton Rem : " + rem.toString();
 		}
 	}
 	
+	//******************************Classes ACTION******************************
+	
 	public class ActionAdd implements ActionListener{
 
-		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			LayoutFolder newFolder = new LayoutFolder();
 			newFolder.addInPanel(topPanel, nbFolderCreate);
@@ -191,12 +208,30 @@ public class GraphInter extends JFrame{
 		
 	}
 	
+	public class ActionDirectory implements ActionListener{
+
+		private JTextField text;
+		
+		public ActionDirectory(JTextField text){
+			this.text = text;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			JFileChooser but = new JFileChooser();
+			but.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			if(but.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+				text.setText(but.getSelectedFile().getAbsolutePath());
+			}
+		}
+		
+	}
+	
 	public class ActionSearch implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			sizeY += 100;
-			setSize(sizeX, sizeY);
+			//A Finir (Provoque la recherche)
 			
 		}
 		
@@ -206,8 +241,7 @@ public class GraphInter extends JFrame{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			sizeY += 100;
-			setSize(sizeX, sizeY);
+			//A finir (Provoque la mise à jour)
 			
 		}
 		

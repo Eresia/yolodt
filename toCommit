@@ -1,9 +1,10 @@
-Folder.java : Ca fait doublon avec DocumentFolder, vois ce que tu peux 
-faire pour que ça soit plus compréhensible. Voir comment gérer les path 
+Voir comment gérer les path 
 des tmp.
+
 Unzip.java : Ca va sûrement disparaître et être intégré dans Folder.java
+
 Yolodt.java : J'ai commencé un scénar type d'utilisation, il faut qu'on 
 le termine pour voir si tout fonctionne, du choppage des ODT à la save 
 dans la BD.  
 
-
+openTmp : renomé en createTmp
