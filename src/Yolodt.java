@@ -9,15 +9,11 @@ public class Yolodt {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-//		Folder folderToStudy = new Folder("res/"); //On balance le dossier à étudier
-//		File tmp = folderToStudy.createTmp(folderToStudy.getPath());
-//		ArrayList<Document> odtToStudy = folderToStudy.searchODT(folderToStudy.getPath()); //On choppe les ODT dedans
-//		Iterator<Document> i = odtToStudy.iterator();
-//		while(i.hasNext()){ //TODO: continue.
-//			System.out.println(i.next());
-//		}
-		Parser p = new Parser("res/content.xml");
-		System.out.println(p);
+		Folder folderToStudy = new Folder("res/"); //On balance le dossier à étudier
+		File tmp = folderToStudy.createTmp(folderToStudy.getPath());
+		ArrayList<Document> odtToStudy = folderToStudy.searchODT(folderToStudy.getPath()); //On choppe les ODT dedans
+//		Parser p = new Parser("res/content.xml");
+//		System.out.println(p);
 		
 	}
 }
