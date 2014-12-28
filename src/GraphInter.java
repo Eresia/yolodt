@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-//Classe principale de l'interface grapique
+//Principal class for GUI
 public class GraphInter extends JFrame{
 	
 	private JButton updateButton;
@@ -43,10 +43,10 @@ public class GraphInter extends JFrame{
 	
 	private int nbFolderCreate;
 	
-	private int sizeX = 700;
-	private int sizeY = 600;
-	private int margin = 5;
-	private int interMargin = 4;
+	private final int sizeX = 700;
+	private final int sizeY = 600;
+	private final int margin = 5;
+	private final int interMargin = 4;
 	
 	
 	public GraphInter(String title){
@@ -63,7 +63,7 @@ public class GraphInter extends JFrame{
 		
 	}
 	
-	//Création de la fenêtre
+	//Window creation
 	public void buildFen(String title){
 		setTitle(title);
 		setSize(sizeX, sizeY);
@@ -72,7 +72,7 @@ public class GraphInter extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	//Création de l'interface
+	//Interface creation
 	public void buildInter(){
 		
 		mainPanel = new JPanel();
@@ -121,7 +121,7 @@ public class GraphInter extends JFrame{
 		refresh();
 	}
 	
-	//Mise à jour des boutons "+", "Update", "Search" et de la zone "Mot clés"
+	//Update "+", "Update", "Search" buttons and "Key Words" area
 	public void updateTop(int posY){
 		GridBagConstraints pos = new GridBagConstraints();
 		
@@ -159,7 +159,7 @@ public class GraphInter extends JFrame{
 			folders.get(0).setRemVisible(true);
 		}
 		else if(folders.isEmpty()){
-			printError("Not folders found, click on \"+\"");
+			System.err.println("Not folders found, click on \"+\"");
 		}
 		else{
 			folders.get(0).setRemVisible(false);
@@ -181,15 +181,15 @@ public class GraphInter extends JFrame{
 		    	try {
 		    		Desktop.getDesktop().open(new File(path));
 		    	} catch (IOException e) {
-		    		printError(e.getMessage());
+		    		System.err.println(e.getMessage());
 				} catch (IllegalArgumentException e){
-		    		printError(e.getMessage());
+					System.err.println(e.getMessage());
 				}
 	    	} else {
-	    		errorArea.setText("Function not supported by your OS");
+	    		System.err.println("Function not supported by your OS");
 	    	}
 	    }else {
-	    	errorArea.setText("Function not supported by your OS");
+	    	System.err.println("Function not supported by your OS");
 	    }
 	}
 	
@@ -202,7 +202,11 @@ public class GraphInter extends JFrame{
 		refresh();
 	}
 	
-	//Classe représentant une demande de dossier (créée quand appuis sur le boutton "+")
+	public JTextArea getErrorArea(){
+		return errorArea;
+	}
+	
+	//Class to represent folder creation
 	public class LayoutFolder {
 		
 		private JTextField folder;
@@ -222,7 +226,7 @@ public class GraphInter extends JFrame{
 			return folder.getText();
 		}
 		
-		//Ajoute la ligne dans la fenêtre
+		//Add the line to Window
 		public void addInPanel(JPanel panel, int posY){
 			GridBagConstraints pos = new GridBagConstraints();
 			folders.add(this);
@@ -245,7 +249,7 @@ public class GraphInter extends JFrame{
 			updateRemVisible();
 		}
 		
-		//Suprimer la ligne de la fenêtre
+		//Remove the line to Window
 		public void removeInPanel(JPanel panel){
 			panel.remove(folder);
 			panel.remove(searchDirectory);
@@ -263,7 +267,7 @@ public class GraphInter extends JFrame{
 		}
 	}
 	
-	//******************************Classes ACTION******************************
+	//******************************ACTION Class's******************************
 	
 	public class ActionAdd implements ActionListener{
 
