@@ -23,24 +23,24 @@ public class Document implements Serializable{
 		this.weight = 0;
 		//parse(path);
 	}
-	public void extractTitles(){
-		String tmpPath = Paths.get(path).getParent()+File.separator+"tmp";
+	public void extractTitles(){ //This method handles the unzip, parse and delete temporary folders procedures.
+		String tmpPath = Paths.get(path).getParent()+File.separator+"tmp"; 
 		File tmpFile = new File(tmpPath);
-		String xmlPath = tmpPath+File.separator+"content.xml";
+		String xmlPath = tmpPath+File.separator+"content.xml"; //We need to manipulate paths in two different types, so we have 2 vars by path.
 		File xmlFile = new File(xmlPath);
-		//ArrayList<Title> ret; 
-		unZip(path, tmpPath.toString());
-		titles = parse(xmlPath);
+		
+		unZip(path, tmpPath.toString());  //Unzips the content.xml onto the temporary folder.
+		titles = parse(xmlPath); //Fills titles with the titles parsed.
 		xmlFile.delete();
-		tmpFile.delete();
+		tmpFile.delete(); //Deletes the temporary files. 
 	}
-	public ArrayList<Title> parse(String path){
+	public ArrayList<Title> parse(String path){ //Calls the Parser object.
 		Parser p = new Parser(path);
 		return p.getTitles();
 	}
 	
 	// LOUIS HELPS : Penser aux opérateurs. Wesh
-	public void searchWords(ArrayList<String> words, boolean hasOrOperator){
+	public void searchWords(ArrayList<String> words, boolean hasOrOperator){ 
 		weight = 0;
 		boolean[] used = new boolean[words.size()];
 		for(int i = 0 ; i < words.size(); i++){
@@ -64,7 +64,7 @@ public class Document implements Serializable{
 			}
 		}
 	}
-	public void unZip(String zipFile, String outputFolder) {
+	public void unZip(String zipFile, String outputFolder) { //Unzips ONLY the 'content.xml' on the odt file.
 		byte[] buffer = new byte[1024];
 		try {
 			// create output directory is not exists
@@ -93,9 +93,9 @@ public class Document implements Serializable{
 			}
 
 			zis.closeEntry();
-			zis.close();
+			zis.close(); //We close what we opened.
 
-			System.out.println("Done");
+			//System.out.println("Done");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();

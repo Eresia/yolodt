@@ -2,8 +2,8 @@ import java.io.Serializable;
 
 public class Title  implements Serializable{
 
-	private String title;
-	private int height;
+	private String title; //Text of the title
+	private int height; //Title's level. Used for the search.
 
 	public Title(String title, int height) {
 		this.title = title;

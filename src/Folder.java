@@ -21,28 +21,28 @@ public class Folder implements Serializable{
 	
 	//FONCTION IO*****************************************************************************************************************************
 	
-	//Crée un dossier tmp dans le path (S'il esxiste déja on le supprime et on le recréé
+	//Creates a temporary folder onto the path of the file. 
+	//We can enhance this by using Java's temporary folders.( see TODO ).  
 	public File createTmp() { //TODO: voir avec createTempDirectory
 		File folder;
-
 		try {
-			folder = new File(path + File.separator + "tmp" + File.separator);
-			if (!(folder.exists())) {
+			folder = new File(path + File.separator + "tmp" + File.separator); 
+			if (!(folder.exists())) { 
 				folder.mkdir();
 			} else {
-				deleteFolder(folder);
+				deleteFolder(folder); //Avoid having 'dirty' temporary folders, especially in case of program's interruption.
 				folder.mkdir();
 			}
 			return folder;
 		} catch (Exception e) {
-			System.out.println("Erreur sur createTmp");
+			System.out.println("Error creating temporary folder.");
 			return null;
 		}
 
 	}
 	
-	//Construit un tableau avec tout les ODT présent dans le path
-	public void searchODT(){
+	
+	public void searchODT(){  //Recursively constructs an ArrayList with all the files with the odt type.
 		ArrayList<String> docs = new ArrayList<String>();
 		HashMap<String, Document> odt = new HashMap<String, Document>();
 		File folder = new File(path);
@@ -53,7 +53,7 @@ public class Folder implements Serializable{
 			}
 		}
 		if(!odt.isEmpty()){
-			createTmp();
+			createTmp(); //We create the temporary files here to avoid useless creating if the hashmap is empty.
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class Folder implements Serializable{
 	
 	//FONCTION IO "lib" ***********************************************************************************************************************************
 
-	//Supprime un fichier/dossier et tout ses sous dossiers
+	//Recursively delete a Folder and all of its content.
 	public void deleteFolder(File file) {
 		if (file.isDirectory()) {
 			for (int i = 0; i < file.list().length; i++) {
@@ -76,7 +76,7 @@ public class Folder implements Serializable{
 		}
 	}
 	
-	//Créé un ArayList de tout les fichiers présent dans le dossier et ses sous dossiers
+	//Creates an ArrayList from the folder's content.
 	public void listDocument(File folder, ArrayList<String> docs){
 		if(!folder.isDirectory()){
 			docs.add(folder.getAbsolutePath());
@@ -88,13 +88,13 @@ public class Folder implements Serializable{
 		}
 	}
 	
-	//Check si un fichier est un ODT
+	//Checks if a file is an Open Document Text file.
 	public boolean isODT(String path){
 	
 		try{
 			Path pathTest = new File(path).toPath();
 			System.out.println(Files.probeContentType(pathTest));
-			return Files.probeContentType(pathTest).equals("application/vnd.oasis.opendocument.text");
+			return Files.probeContentType(pathTest).equals("application/vnd.oasis.opendocument.text"); //Check for MIME-type, stronger than checking for file's extension.
 		}catch(IOException e){
 			e.printStackTrace();
 			return false;
