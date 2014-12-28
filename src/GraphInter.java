@@ -153,6 +153,19 @@ public class GraphInter extends JFrame{
 		topPanel.add(searchButton, pos);
 	}
 	
+	public void updateRemVisible(){
+		
+		if(folders.size() > 1){
+			folders.get(0).setRemVisible(true);
+		}
+		else if(folders.isEmpty()){
+			printError("Not folders found, click on \"+\"");
+		}
+		else{
+			folders.get(0).setRemVisible(false);
+		}
+	}
+	
 	public void printODT(ArrayList<Document> docs){
 		DefaultListModel<String> model = new DefaultListModel<String>();
 		for(Document d : docs){
@@ -168,11 +181,9 @@ public class GraphInter extends JFrame{
 		    	try {
 		    		java.awt.Desktop.getDesktop().open(new File(path));
 		    	} catch (IOException e) {
-		    		errorArea.setText(e.getMessage());
-		    		refresh();
+		    		printError(e.getMessage());
 				} catch (IllegalArgumentException e){
-		    		errorArea.setText(e.getMessage());
-		    		refresh();
+		    		printError(e.getMessage());
 				}
 	    	} else {
 	    		errorArea.setText("Function not supported by your OS");
@@ -184,6 +195,11 @@ public class GraphInter extends JFrame{
 	
 	public void refresh(){
 		setContentPane(mainPanel);
+	}
+	
+	public void printError(String error){
+		errorArea.setText(error);
+		refresh();
 	}
 	
 	//Classe représentant une demande de dossier (créée quand appuis sur le boutton "+")
@@ -226,6 +242,7 @@ public class GraphInter extends JFrame{
 			pos.weightx = 0.1;
 			panel.add(rem, pos);
 			updateTop(posY + 1);
+			updateRemVisible();
 		}
 		
 		//Suprimer la ligne de la fenêtre
@@ -234,6 +251,11 @@ public class GraphInter extends JFrame{
 			panel.remove(searchDirectory);
 			panel.remove(rem);
 			folders.remove(this);
+			updateRemVisible();
+		}
+		
+		public void setRemVisible(boolean visible){
+			rem.setEnabled(visible);
 		}
 		
 		public String toString(){
