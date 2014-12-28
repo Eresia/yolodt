@@ -1,19 +1,15 @@
-import java.io.BufferedInputStream;
-import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class Folder {
+public class Folder implements Serializable{
 
 	private String path;
+	private HashMap<String, Document> docs = new HashMap<String, Document>();
 
 	public Folder(String path) {
 		this.path = path;
@@ -46,21 +42,19 @@ public class Folder {
 	}
 	
 	//Construit un tableau avec tout les ODT présent dans le path
-	public ArrayList<Document> searchODT(){
+	public void searchODT(){
 		ArrayList<String> docs = new ArrayList<String>();
-		ArrayList<Document> odt = new ArrayList<Document>();
+		HashMap<String, Document> odt = new HashMap<String, Document>();
 		File folder = new File(path);
 		listDocument(folder, docs);
 		for(String docAct : docs){
 			if(isODT(docAct)){
-				odt.add(new Document(docAct));
+				odt.put(docAct, new Document(docAct));
 			}
 		}
 		if(!odt.isEmpty()){
 			createTmp();
 		}
-		
-		return odt;
 	}
 	
 	
@@ -68,7 +62,7 @@ public class Folder {
 	
 	
 	//FONCTION IO "lib" ***********************************************************************************************************************************
-	
+
 	//Supprime un fichier/dossier et tout ses sous dossiers
 	public void deleteFolder(File file) {
 		if (file.isDirectory()) {
@@ -106,69 +100,43 @@ public class Folder {
 			return false;
 		}
 	}
-	
-	//FONCTION STOCKAGE**********************************************************************************************************
 
-	//Lis les objets présents dans "data.db" du path et les renvois sous un ArrayList
-	public ArrayList readObject(String path) {
-		File folder = new File(path);
-		ObjectInputStream ois;
-		ArrayList objs = new ArrayList();
-		Object reading;
-		try {
-			ois = new ObjectInputStream(new BufferedInputStream(
-					new FileInputStream(folder.getAbsolutePath()
-							+ File.separator + "data.db")));
-			try {
-				while (true) {
-					reading = ois.readObject();
-					objs.add(reading);
-				}
-			} catch (EOFException e) {
-				ois.close();
-				return objs;
-			} catch (ClassNotFoundException e) {
-				System.out.println("Class no exist (in read)");
-				e.printStackTrace();
-				return null;
-			}
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found (in read)");
-			e.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			System.out.println("IOException (in read)");
-			e.printStackTrace();
-			return null;
-		}
+	@Override
+	public String toString() {
+		return "Folder [path=" + path + ", docs=" + docs + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((docs == null) ? 0 : docs.hashCode());
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Folder other = (Folder) obj;
+		if (docs == null) {
+			if (other.docs != null)
+				return false;
+		} else if (!docs.equals(other.docs))
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		return true;
 	}
 	
-	//Ecrit les objets de l'ArrayList dans le data.db du path
-	public boolean writeObject(ArrayList objs, String path) {
-		File folder = new File(path);
-		ObjectOutputStream oos;
-		if (folder.isDirectory()) {
-			try {
-				oos = new ObjectOutputStream(new FileOutputStream(
-						folder.getAbsolutePath() + File.separator + "data.db"));
-				for (Object obj : objs) {
-					oos.writeObject(obj);
-				}
-				oos.close();
-				return true;
-			} catch (FileNotFoundException e) {
-				System.out.println("File not found");
-				e.printStackTrace();
-				return false;
-			} catch (IOException e) {
-				System.out.println("Error in Write");
-				e.printStackTrace();
-				return false;
-			}
-		} else {
-			System.out.println(folder.getAbsolutePath() + " is a directory");
-			return false;
-		}
-	}
+	
 
 }

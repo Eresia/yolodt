@@ -13,7 +13,6 @@ import java.util.zip.ZipInputStream;
 
 public class Document implements Serializable{
 
-	private static final long serialVersionUID = 1L;
 	private String path;
 	private int weight;
 	private ArrayList<Title> titles;
@@ -48,7 +47,7 @@ public class Document implements Serializable{
 			used[i] = false;
 		}
 		for(Title t : titles){
-			ListIterator li = words.listIterator();
+			ListIterator<String> li = words.listIterator();
 			while(li.hasNext()){
 				int nextInd = li.nextIndex();
 				if(t.getTitle().contains((String)li.next())){
@@ -113,21 +112,23 @@ public class Document implements Serializable{
 	public void setPath(String path) {
 		this.path = path;
 	}
-	public String toString()
-	{
-		return "path : " + path + "\n Titles : " + titles.toString();
+	
+	
+	
+	@Override
+	public String toString() {
+		return "Document [path=" + path + ", weight=" + weight + ", titles="
+				+ titles + "]";
 	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((titles == null) ? 0 : titles.hashCode());
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		result = prime * result + ((titles == null) ? 0 : titles.hashCode());
+		result = prime * result + weight;
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -137,16 +138,20 @@ public class Document implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Document other = (Document) obj;
-		if (titles == null) {
-			if (other.titles != null)
-				return false;
-		} else if (!titles.equals(other.titles))
-			return false;
 		if (path == null) {
 			if (other.path != null)
 				return false;
 		} else if (!path.equals(other.path))
 			return false;
+		if (titles == null) {
+			if (other.titles != null)
+				return false;
+		} else if (!titles.equals(other.titles))
+			return false;
+		if (weight != other.weight)
+			return false;
 		return true;
 	}
+
+	
 }

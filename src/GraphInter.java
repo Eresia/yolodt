@@ -177,9 +177,9 @@ public class GraphInter extends JFrame{
 	
 	public void openODT(String path){
 	    if(Desktop.isDesktopSupported()){
-	    	if(Desktop.getDesktop().isSupported(java.awt.Desktop.Action.OPEN)){
+	    	if(Desktop.getDesktop().isSupported(Desktop.Action.OPEN)){
 		    	try {
-		    		java.awt.Desktop.getDesktop().open(new File(path));
+		    		Desktop.getDesktop().open(new File(path));
 		    	} catch (IOException e) {
 		    		printError(e.getMessage());
 				} catch (IllegalArgumentException e){
