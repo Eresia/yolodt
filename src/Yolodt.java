@@ -9,13 +9,14 @@ public class Yolodt {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-//		Folder folderToStudy = new Folder("res/"); //On balance le dossier à étudier
-//		File tmp = folderToStudy.createTmp(folderToStudy.getPath());
-//		ArrayList<Document> odtToStudy = folderToStudy.searchODT(folderToStudy.getPath()); //On choppe les ODT dedans
-//		
-		Document d = new Document("res/content.odt");
-		d.extractTitles();
-		System.out.println(d);
+		Folder folderToStudy = new Folder("res/"); //On balance le dossier à étudier
+		ArrayList<Document>odtToStudy = folderToStudy.searchODT();
+		for(Document d : odtToStudy){
+			Document curr = new Document(d.getPath());
+			curr.extractTitles();
+			curr.getPrettyOutput();
+		}
+		
 	}
 }
  

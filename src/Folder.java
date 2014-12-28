@@ -46,7 +46,7 @@ public class Folder {
 	}
 	
 	//Construit un tableau avec tout les ODT présent dans le path
-	public ArrayList<Document> searchODT(String path){
+	public ArrayList<Document> searchODT(){
 		ArrayList<String> docs = new ArrayList<String>();
 		ArrayList<Document> odt = new ArrayList<Document>();
 		File folder = new File(path);

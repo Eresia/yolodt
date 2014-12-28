@@ -113,7 +113,6 @@ public class Document implements Serializable{
 	public void setPath(String path) {
 		this.path = path;
 	}
-
 	public String toString()
 	{
 		return "path : " + path + "\n Titles : " + titles.toString();
