@@ -25,7 +25,7 @@ public class Folder {
 	
 	//FONCTION IO*****************************************************************************************************************************
 	
-	//Ouvre un dossier tmp dans le path (S'il esxiste déja on le supprime et on le recréé
+	//Crée un dossier tmp dans le path (S'il esxiste déja on le supprime et on le recréé
 	public File createTmp(String path) {
 		File folder;
 
