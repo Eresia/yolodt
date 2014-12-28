@@ -60,7 +60,9 @@ public class Parser {
 			int height = Integer.parseInt(title.getAttribute("text:outline-level")); /* Depending on the importance of the title, the field text:outline-level contains 
 			 																		  * a number. Here we convert this number to an int, because getAttribute's type is
 			 																		  * String.*/
-			titles.add(new Title(title.getTextContent(), height+1)); //We add 1 here because of text:h's height.
+			if(height<=4){//We're limited to 4 levels of titles.
+				titles.add(new Title(title.getTextContent(), height+1)); //We add 1 here because of text:h's height.
+			}
 		}
 	}
 	public ArrayList<Title> getTitles(){
