@@ -151,6 +151,10 @@ public class Folder implements Serializable {
 		}
 		return docsSort;
 	}
+	
+	public ArrayList<Document> getDocuments(){
+		return docs;
+	}
 
 	// Others Fonctions
 	// ***********************************************************************************************************************************

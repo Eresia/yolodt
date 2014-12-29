@@ -105,7 +105,7 @@ public class GraphInter extends JFrame {
 		//Buttons initialisation
 		updateButton = new JButton("Import/Update");
 		updateButton.addActionListener(new ActionUpdate());
-		searchButton = new JButton("Search");
+		searchButton = new JButton("Search/Dtb");
 		searchButton.addActionListener(new ActionSearch());
 		addButton = new JButton("+");
 		addButton.addActionListener(new ActionAdd());
@@ -250,14 +250,83 @@ public class GraphInter extends JFrame {
 			System.err.println("Function not supported by your OS");
 		}
 	}
+	
+	/**
+	 * Display the dtb in JList
+	 */
+	public void displayDtb(){
+		Storage dtb = new Storage(".");
+		HashMap<String, Folder> fold = dtb.readFolder();
+		if(fold.isEmpty() || fold == null){
+			System.err.println("Database is Empty");
+		}
+		//List construction
+		DefaultListModel<String> model = new DefaultListModel<String>();
+		for(String key : fold.keySet()){
+			for (Document d : fold.get(key).getDocuments()) {
+				model.addElement(d.getPath());
+			}
+		}
+		//Update display
+		results.setModel(model);
+		refresh();
+	}
+	
+	/**
+	 * Display ODT in Folders asked
+	 */
+	public void displayFolders(){
+		
+		HashMap<String, Folder> fold = new HashMap<String, Folder>();
+		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
+		
+		readInDtb(askFolders, fold);
+		if(fold.isEmpty() || fold == null){
+			System.err.println("Database don't knows these folders");
+		}
+		//List construction
+		DefaultListModel<String> model = new DefaultListModel<String>();
+		for(String key : fold.keySet()){
+			for (Document d : fold.get(key).getDocuments()) {
+				model.addElement(d.getPath());
+			}
+		}
+		//Update display
+		results.setModel(model);
+		refresh();
+	}
+	
+	/**
+	 * Search keywords in dtb
+	 */
+	public void searchInDtb(){
+		Storage dtb = new Storage(".");
+		HashMap<String, Folder> fold = dtb.readFolder();
+		
+		//Split String to words
+		String[] keyWordsString = keyWords.getText().split(" ");
+		
+		//Transform table to ArrayList
+		ArrayList<String> listKeyWords = new ArrayList<String>();
+		for(int i = 0; i < keyWordsString.length; i++){
+			listKeyWords.add(keyWordsString[i]);
+		}
+		
+		//Make the keywords search
+		for(String key : fold.keySet()){
+			fold.get(key).searchWords(listKeyWords);
+		}
+		
+		printODT(fold);
+	}
 
 	/**
 	 * Update Action
 	 * @param foldersToUpdate
 	 */
 	public void updateFolders(ArrayList<LayoutFolder> foldersToUpdate) {
-		//Bdd creation
-		Storage bdd = new Storage(".");
+		//Dtb creation
+		Storage dtb = new Storage(".");
 		
 		//Do a copy of folders
 		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) foldersToUpdate.clone();
@@ -268,7 +337,7 @@ public class GraphInter extends JFrame {
 		//Write folders on database
 		for (LayoutFolder lf : askFolders) {
 			Folder f = new Folder(lf.getText());
-			bdd.writeFolder(f);
+			dtb.writeFolder(f);
 		}
 		
 		//Display successful action
@@ -284,10 +353,10 @@ public class GraphInter extends JFrame {
 		HashMap<String, Folder> hmFolders = new HashMap<String, Folder>();
 		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
 		
-		//Read bdd and check if all folder are knows
-		if (readInBdd(askFolders, hmFolders)){
+		//Read dtb and check if all folder are knows
+		if (readInDtb(askFolders, hmFolders)){
 			updateFolders(askFolders); //If it isn't update not find folders
-			readInBdd(askFolders, hmFolders); //And read a second time
+			readInDtb(askFolders, hmFolders); //And read a second time
 		}
 		
 		//Split String to words
@@ -313,24 +382,24 @@ public class GraphInter extends JFrame {
 	}
 
 	/**
-	 * Read folders in bdd
+	 * Read folders in dtb
 	 * @param askFolders
 	 * @param hmFolders
 	 * @return
 	 */
-	public boolean readInBdd(ArrayList<LayoutFolder> askFolders, HashMap<String, Folder> hmFolders) {
+	public boolean readInDtb(ArrayList<LayoutFolder> askFolders, HashMap<String, Folder> hmFolders) {
 		
-		HashMap<String, Folder> bddTotal;
-		Storage bdd = new Storage(".");
+		HashMap<String, Folder> dtbTotal;
+		Storage dtb = new Storage(".");
 		
 		//Read IO
-		bddTotal = bdd.readFolder();
+		dtbTotal = dtb.readFolder();
 		
 		//Clean empty and false path
 		clean(askFolders);
 		
 		//Check if folders are all knows
-		for (String key : bddTotal.keySet()) {
+		for (String key : dtbTotal.keySet()) {
 			for (LayoutFolder lf : askFolders) {
 				if (lf.getText().equals(key)) {
 					hmFolders.put(key, new Folder(key));
@@ -579,7 +648,7 @@ public class GraphInter extends JFrame {
 	}
 
 	/**
-	 * Action of Search button
+	 * Action of Search/Dtb button
 	 * @author ABADJI Julien & LEPESANT Bastien
 	 *
 	 */
@@ -587,10 +656,32 @@ public class GraphInter extends JFrame {
 
 		@Override
 		/**
-		 * Call searchInFolders 
+		 * Call fonctions of dtb dependant to text zones
 		 */
 		public void actionPerformed(ActionEvent arg0) {
-			searchInFolders();
+			
+			boolean allIsEmpty = true;
+			for(LayoutFolder lf : folders){
+				if (!lf.getText().isEmpty()){
+					allIsEmpty = false;
+				}
+			}
+			
+			if(keyWords.getText().isEmpty()){
+				if(allIsEmpty){
+					displayDtb();
+				}
+				else{
+					displayFolders();
+				}
+			}
+			else{
+				if(!allIsEmpty){
+					searchInFolders();
+				}else{
+					searchInDtb();
+				}
+			}
 
 		}
 
