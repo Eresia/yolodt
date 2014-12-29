@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -40,6 +42,27 @@ public class Document implements Serializable{
 		return p.getTitles();
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ArrayList parseSearch(ArrayList<String> words){
+		boolean hasAndOperator=false;
+		String keyWords="";
+		ArrayList parsedSearch = new ArrayList();
+		if(words.get(0).equals("+")){
+			hasAndOperator = true;
+			words.remove(0);
+		}else if(words.get(0).equals("-")){
+			words.remove(0);
+		}
+		parsedSearch.add(hasAndOperator);
+		for(String word : words){
+			keyWords.concat(word+" ");
+		}
+		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(keyWords);
+		while (m.find()){
+		    parsedSearch.add(m.group(1).replace("\"", ""));
+		}
+		return parsedSearch;
+	}
 	// LOUIS HELPS : Penser aux opérateurs. Wesh
 	public void searchWords(ArrayList<String> words, boolean hasOrOperator){ 
 		weight = 0;
@@ -81,7 +104,7 @@ public class Document implements Serializable{
 				if (ze.getName().equals("content.xml")) { //Search for content.xml, and unzip it.
 					FileOutputStream fos;
 					File newFile = new File(outputFolder + File.separator + ze.getName());
-					System.err.println("file unzip : " + newFile.getAbsoluteFile());
+					System.out.println("file unzip : " + newFile.getAbsoluteFile());
 					fos = new FileOutputStream(newFile);
 					int len;
 					while ((len = zis.read(buffer)) > 0) { //Write.

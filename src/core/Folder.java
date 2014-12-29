@@ -14,7 +14,13 @@ public class Folder implements Serializable{
 	private ArrayList<Document> docs = new ArrayList<Document>();
 
 	public Folder(String path) {
-		this.path = path;
+		
+		File f = new File(path);
+		try {
+			this.path = f.getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		searchODT();
 	}
 	
