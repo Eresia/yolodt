@@ -15,6 +15,7 @@ public class Folder implements Serializable{
 
 	public Folder(String path) {
 		this.path = path;
+		searchODT();
 	}
 	
 	public String getPath(){
@@ -113,18 +114,20 @@ public class Folder implements Serializable{
 	public ArrayList<Document> DocSorting(){
 		ArrayList<Document> docsSort = new ArrayList<Document>();
 		for(Document docPlacing : docs){
-			if(docsSort.isEmpty()){
-				docsSort.add(docPlacing);
-			}
-			else{
-				for(Document d : docsSort){
-					if(d.getWeight() < docPlacing.getWeight()){
-						docsSort.add(docsSort.indexOf(d), docPlacing);
-						break;
-					}
-				}
-				if(!docsSort.contains(docPlacing)){
+			if(docPlacing.getWeight() != 0){
+				if(docsSort.isEmpty()){
 					docsSort.add(docPlacing);
+				}
+				else{
+					for(Document d : docsSort){
+						if(d.getWeight() < docPlacing.getWeight()){
+							docsSort.add(docsSort.indexOf(d), docPlacing);
+							break;
+						}
+					}
+					if(!docsSort.contains(docPlacing)){
+						docsSort.add(docPlacing);
+					}
 				}
 			}
 		}

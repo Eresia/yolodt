@@ -209,9 +209,10 @@ public class GraphInter extends JFrame {
 
 	public void updateFolders() {
 		Storage bdd = new Storage(".");
-		for (LayoutFolder lf : folders) {
+		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
+		clean(askFolders);
+		for (LayoutFolder lf : askFolders) {
 			Folder f = new Folder(lf.getText());
-			f.searchODT();
 			bdd.writeFolder(f);
 		}
 
@@ -224,6 +225,8 @@ public class GraphInter extends JFrame {
 			updateFolders();
 			readInBdd(hmFolders);
 		}
+		System.out.println(hmFolders);
+		
 		String[] keyWordsString = keyWords.getText().split(" ");
 		ArrayList<String> listKeyWords = new ArrayList<String>();
 		int begin = 0;
@@ -265,9 +268,9 @@ public class GraphInter extends JFrame {
 	}
 
 	public void readInBdd(HashMap<String, Folder> hmFolders) {
-		HashMap<String, Folder> bddTotal = new HashMap<String, Folder>();
+		HashMap<String, Folder> bddTotal;
 		Storage bdd = new Storage(".");
-		hmFolders = bdd.readFolder();
+		bddTotal = bdd.readFolder();
 		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
 		clean(askFolders);
 		for (String key : bddTotal.keySet()) {
@@ -282,12 +285,29 @@ public class GraphInter extends JFrame {
 	}
 
 	public void clean(ArrayList<LayoutFolder> askFolders) {
+		String message = "";
 		for (LayoutFolder lf : askFolders) {
 			if (lf.getText().isEmpty()) {
 				askFolders.remove(lf);
-			} else if (!new File(lf.getText()).exists()) {
-				askFolders.remove(lf);
 			}
+			else{
+				try{
+					File rep = new File(lf.getText());
+					if(!rep.exists()){
+						message += lf.getText() + " n'existe pas";
+						askFolders.remove(lf);
+					}
+					else{
+						lf.setText(rep.getCanonicalPath());
+					}
+				}catch(IOException e){
+					message += lf.getText() + " n'est pas un chemin valide";
+					askFolders.remove(lf);
+				}
+			}
+		}
+		if(!message.isEmpty()){
+			System.out.println(message);
 		}
 	}
 
@@ -322,6 +342,10 @@ public class GraphInter extends JFrame {
 
 		public String getText() {
 			return folder.getText();
+		}
+		
+		public void setText(String text){
+			folder.setText(text);
 		}
 
 		// Add the line to Window
@@ -364,7 +388,7 @@ public class GraphInter extends JFrame {
 		public String toString() {
 			return "JTextField : " + folder.toString() + "JButton dir: "
 					+ searchDirectory.toString() + "\nJButton Rem : "
-					+ rem.toString();
+					+ rem.toString() + "\n";
 		}
 	}
 

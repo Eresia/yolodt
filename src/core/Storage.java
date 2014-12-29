@@ -39,17 +39,13 @@ public class Storage {
 					ois.close();
 					return  fold;
 				} catch (ClassNotFoundException e) {
-					System.out.println("Class no exist (in read)");
-					e.printStackTrace();
+					System.err.println("Class no exist (in read)");
 					return null;
 				}
 			} catch (FileNotFoundException e) {
-				System.out.println("File not found (in read)");
-				e.printStackTrace();
-				return null;
+				return new HashMap<String, Folder>();
 			} catch (IOException e) {
-				System.out.println("IOException (in read)");
-				e.printStackTrace();
+				System.err.println("IOException (in read)");
 				return null;
 			}
 		}
