@@ -22,7 +22,7 @@ public class Document implements Serializable{
 	{
 		this.path = path;
 		this.weight = 0;
-		//parse(path);
+		extractTitles();
 	}
 	public void extractTitles(){ //This method handles the unzip, parse and delete temporary folders procedures.
 		String tmpPath = Paths.get(path).getParent()+File.separator+"tmp"; 
@@ -48,12 +48,10 @@ public class Document implements Serializable{
 			used[i] = false;
 		}
 		for(Title t : titles){
-			ListIterator<String> li = words.listIterator();
-			while(li.hasNext()){
-				int nextInd = li.nextIndex();
-				if(t.getTitle().contains((String)li.next())){
+			for(String w : words){
+				if(t.getTitle().contains(w)){
 					weight += 6 - t.getHeight();
-					used[nextInd] = true;
+					used[words.indexOf(w)] = true;
 				}
 			}
 		}
@@ -65,6 +63,7 @@ public class Document implements Serializable{
 			}
 		}
 	}
+	
 	public void unZip(String zipFile, String outputFolder) { //Unzips ONLY the 'content.xml' on the odt file.
 		byte[] buffer = new byte[1024];
 		try {
@@ -82,7 +81,7 @@ public class Document implements Serializable{
 				if (ze.getName().equals("content.xml")) { //Search for content.xml, and unzip it.
 					FileOutputStream fos;
 					File newFile = new File(outputFolder + File.separator + ze.getName());
-					System.out.println("file unzip : " + newFile.getAbsoluteFile());
+					System.err.println("file unzip : " + newFile.getAbsoluteFile());
 					fos = new FileOutputStream(newFile);
 					int len;
 					while ((len = zis.read(buffer)) > 0) { //Write.
@@ -104,6 +103,10 @@ public class Document implements Serializable{
 	}
 	public String getPath() {
 		return path;
+	}
+	
+	public int getWeight(){
+		return weight;
 	}
 	
 	public ArrayList<Title> getTitles(){

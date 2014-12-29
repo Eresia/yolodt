@@ -3,6 +3,10 @@ package main;
 import graph.CustomErrStream;
 import graph.GraphInter;
 
+import java.util.HashMap;
+
+import core.Folder;
+
 //Test de l'interface graphique
 public class TestGUI {
 

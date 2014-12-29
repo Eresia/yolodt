@@ -6,11 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Folder implements Serializable{
 
 	private String path;
-	private HashMap<String, Document> docs = new HashMap<String, Document>();
+	private ArrayList<Document> docs = new ArrayList<Document>();
 
 	public Folder(String path) {
 		this.path = path;
@@ -36,7 +37,7 @@ public class Folder implements Serializable{
 			}
 			return folder;
 		} catch (Exception e) {
-			System.out.println("Error creating temporary folder.");
+			System.err.println("Error creating temporary folder.");
 			return null;
 		}
 
@@ -44,16 +45,15 @@ public class Folder implements Serializable{
 	
 	
 	public void searchODT(){  //Recursively constructs an ArrayList with all the files with the odt type.
-		ArrayList<String> docs = new ArrayList<String>();
-		HashMap<String, Document> odt = new HashMap<String, Document>();
+		ArrayList<String> files = new ArrayList<String>();
 		File folder = new File(path);
-		listDocument(folder, docs);
-		for(String docAct : docs){
+		listDocument(folder, files);
+		for(String docAct : files){
 			if(isODT(docAct)){
-				odt.put(docAct, new Document(docAct));
+				docs.add(new Document(docAct));
 			}
 		}
-		if(!odt.isEmpty()){
+		if(!docs.isEmpty()){
 			createTmp(); //We create the temporary files here to avoid useless creating if the hashmap is empty.
 		}
 	}
@@ -62,7 +62,7 @@ public class Folder implements Serializable{
 	
 	
 	
-	//FONCTION IO "lib" ***********************************************************************************************************************************
+	//Io Fonctions "lib" ***********************************************************************************************************************************
 
 	//Recursively delete a Folder and all of its content.
 	public void deleteFolder(File file) {
@@ -78,13 +78,13 @@ public class Folder implements Serializable{
 	}
 	
 	//Creates an ArrayList from the folder's content.
-	public void listDocument(File folder, ArrayList<String> docs){
+	public void listDocument(File folder, ArrayList<String> files){
 		if(!folder.isDirectory()){
-			docs.add(folder.getAbsolutePath());
+			files.add(folder.getAbsolutePath());
 		}
 		else{
 			for(int i = 0; i < folder.list().length; i++){
-				listDocument(new File(folder.getAbsolutePath() + File.separator + folder.list()[i]), docs);
+				listDocument(new File(folder.getAbsolutePath() + File.separator + folder.list()[i]), files);
 			}
 		}
 	}
@@ -94,13 +94,44 @@ public class Folder implements Serializable{
 	
 		try{
 			Path pathTest = new File(path).toPath();
-			System.out.println(Files.probeContentType(pathTest));
+			//System.out.println(Files.probeContentType(pathTest));
 			return Files.probeContentType(pathTest).equals("application/vnd.oasis.opendocument.text"); //Check for MIME-type, stronger than checking for file's extension.
 		}catch(IOException e){
 			e.printStackTrace();
 			return false;
 		}
 	}
+	
+	//On Documents Fonctions ********************************************************************************************************************************
+	
+	public void searchWords(ArrayList<String> words, boolean hasOrOperator){
+		for(Document d : docs){
+			d.searchWords(words, hasOrOperator);
+		}
+	}
+	
+	public ArrayList<Document> DocSorting(){
+		ArrayList<Document> docsSort = new ArrayList<Document>();
+		for(Document docPlacing : docs){
+			if(docsSort.isEmpty()){
+				docsSort.add(docPlacing);
+			}
+			else{
+				for(Document d : docsSort){
+					if(d.getWeight() < docPlacing.getWeight()){
+						docsSort.add(docsSort.indexOf(d), docPlacing);
+						break;
+					}
+				}
+				if(!docsSort.contains(docPlacing)){
+					docsSort.add(docPlacing);
+				}
+			}
+		}
+		return docsSort;
+	}
+	
+	//Others Fonctions ***********************************************************************************************************************************
 
 	@Override
 	public String toString() {
