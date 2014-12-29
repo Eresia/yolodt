@@ -220,12 +220,10 @@ public class GraphInter extends JFrame {
 
 	public void searchInFolders(){
 		HashMap<String, Folder> hmFolders = new HashMap<String, Folder>();
-		readInBdd(hmFolders);
-		if (!folders.isEmpty()){
+		if (readInBdd(hmFolders)){
 			updateFolders();
 			readInBdd(hmFolders);
 		}
-		System.out.println(hmFolders);
 		
 		String[] keyWordsString = keyWords.getText().split(" ");
 		ArrayList<String> listKeyWords = new ArrayList<String>();
@@ -255,7 +253,6 @@ public class GraphInter extends JFrame {
 				}
 			}
 			else{
-				System.err.println(keyWordsString[i]);
 				listKeyWords.add(keyWordsString[i]);
 			}
 		}
@@ -267,7 +264,7 @@ public class GraphInter extends JFrame {
 		
 	}
 
-	public void readInBdd(HashMap<String, Folder> hmFolders) {
+	public boolean readInBdd(HashMap<String, Folder> hmFolders) {
 		HashMap<String, Folder> bddTotal;
 		Storage bdd = new Storage(".");
 		bddTotal = bdd.readFolder();
@@ -282,6 +279,7 @@ public class GraphInter extends JFrame {
 				}
 			}
 		}
+		return !askFolders.isEmpty();
 	}
 
 	public void clean(ArrayList<LayoutFolder> askFolders) {
