@@ -21,8 +21,7 @@ public class Storage {
 	
 	// FONCTION STOCKAGE**********************************************************************************************************
 
-		// Lis les objets présents dans "data.db" du path et les renvois sous un
-		// ArrayList
+		// Read HashMap in fileName
 		public HashMap<String, Folder> readFolder(String fileName) {
 			File folder = new File(path);
 			ObjectInputStream ois;
@@ -50,16 +49,16 @@ public class Storage {
 			}
 		}
 		
+		//Read HashMap in "data.db"
 		public HashMap<String, Folder> readFolder() {
 			return readFolder("data.db");
 		}
 
-		// Ecrit l'HashMap dans le "data.db"
+		// Write the HashMap in "data.db"
 		public boolean writeFolder(Folder fold) {
 			File folder = new File(path);
 			HashMap<String, Folder> data = readFolder();
 			data.put(fold.getPath(), fold);
-			
 			if (folder.isDirectory()) {
 				try {
 					FileOutputStream fos = new FileOutputStream(folder.getAbsolutePath() + File.separator + "data.db");
