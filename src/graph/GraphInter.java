@@ -229,7 +229,7 @@ public class GraphInter extends JFrame {
 		
 		String[] keyWordsString = keyWords.getText().split(" ");
 		ArrayList<String> listKeyWords = new ArrayList<String>();
-		int begin = 0;
+		/*int begin = 0;
 		boolean hasOrOperator = true;
 		if(keyWordsString[0].equals("-")){
 			begin = 1;
@@ -257,10 +257,13 @@ public class GraphInter extends JFrame {
 			else{
 				listKeyWords.add(keyWordsString[i]);
 			}
+		}*/
+		for(int i = 0; i < keyWordsString.length; i++){
+			listKeyWords.add(keyWordsString[i]);
 		}
 		
 		for(String key : hmFolders.keySet()){
-			hmFolders.get(key).searchWords(listKeyWords, hasOrOperator);
+			hmFolders.get(key).searchWords(listKeyWords);
 		}
 		printODT(hmFolders);
 		System.err.println("End of search");
