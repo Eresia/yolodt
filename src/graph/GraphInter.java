@@ -29,23 +29,31 @@ import core.Document;
 import core.Folder;
 import core.Storage;
 
-//Principal class for GUI
+/**
+ * Class for GUI
+ * @author ABADJI Julien & LEPESANT Bastien
+ */
 public class GraphInter extends JFrame {
 
+	//Buttons
 	private JButton updateButton;
 	private JButton searchButton;
 	private JButton addButton;
+	
+	//KeyWords text area
 	private JTextField keyWords;
-	// FLORIAN HELPS : Utilisation JList pratique. Wesh
-	private JList<String> results;
-	private JTextArea errorArea;
 
+	//Principal panel
 	private JPanel mainPanel;
 
+	//Top panel
 	private JPanel topPanel;
 	private ArrayList<LayoutFolder> folders = new ArrayList<LayoutFolder>();
 
+	//Bot panel
 	private JPanel botPanel;
+	private JList<String> results; // FLORIAN HELPS : Thanks for JList idea. Wesh
+	private JTextArea errorArea;
 
 	private int nbFolderCreate;
 
@@ -54,21 +62,21 @@ public class GraphInter extends JFrame {
 	private final int margin = 5;
 	private final int interMargin = 4;
 
+	/**
+	 * Window creation
+	 * @param title
+	 */
 	public GraphInter(String title) {
 		super();
 
 		buildFen(title);
 		buildInter();
-
-		/*
-		 * ArrayList<Document> docs = new ArrayList<Document>(); docs.add(new
-		 * Document("/home/eresia/Documents/S3/Test/tests/src/content.odt"));
-		 * docs.add(new Document("machine")); printODT(docs);
-		 */
-
 	}
 
-	// Window creation
+	/**
+	 * Window creation
+	 * @param title
+	 */
 	public void buildFen(String title) {
 		setTitle(title);
 		setSize(sizeX, sizeY);
@@ -77,27 +85,36 @@ public class GraphInter extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
-	// Interface creation
+	/**
+	 * Interface creation
+	 */
 	public void buildInter() {
 
+		//Panels initialisation
 		mainPanel = new JPanel();
 		topPanel = new JPanel();
 		botPanel = new JPanel();
 
+		//Layout initialisation
 		mainPanel.setLayout(new BorderLayout());
 		topPanel.setLayout(new GridBagLayout());
 		botPanel.setLayout(new GridBagLayout());
 		mainPanel.add(topPanel, BorderLayout.NORTH);
 		mainPanel.add(botPanel, BorderLayout.CENTER);
 
+		//Buttons initialisation
 		updateButton = new JButton("Import/Update");
 		updateButton.addActionListener(new ActionUpdate());
 		searchButton = new JButton("Search");
 		searchButton.addActionListener(new ActionSearch());
 		addButton = new JButton("+");
 		addButton.addActionListener(new ActionAdd());
+		
+		//keyWords Text initialisation
 		keyWords = new JTextField();
 		keyWords.addActionListener(new ActionUpdate());
+		
+		//Results and error text area initialisation
 		results = new JList<String>();
 		results.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		results.setLayoutOrientation(JList.VERTICAL);
@@ -106,6 +123,7 @@ public class GraphInter extends JFrame {
 		errorArea = new JTextArea();
 		errorArea.setEditable(false);
 
+		//BotPanel place
 		GridBagConstraints pos = new GridBagConstraints();
 		pos.insets.left = margin;
 		pos.insets.bottom = interMargin;
@@ -122,15 +140,21 @@ public class GraphInter extends JFrame {
 		pos.weighty = 0.1;
 		botPanel.add(errorArea, pos);
 
+		//TopPanel place
 		LayoutFolder folderInit = new LayoutFolder();
 		folderInit.addInPanel(topPanel, 0);
 		updateTop(1);
 
+		//Window display
 		refresh();
 	}
 
-	// Update "+", "Update", "Search" buttons and "Key Words" area
+	/**
+	 * Update "+", "Update", "Search" buttons and "Key Words" area
+	 * @param posY
+	 */
 	public void updateTop(int posY) {
+		
 		GridBagConstraints pos = new GridBagConstraints();
 
 		topPanel.remove(addButton);
@@ -167,29 +191,49 @@ public class GraphInter extends JFrame {
 		topPanel.add(searchButton, pos);
 	}
 
+	/**
+	 * If the first button "-" can be click
+	 */
 	public void updateRemVisible() {
 
+		//If there are more one LayoutFolder
 		if (folders.size() > 1) {
-			folders.get(0).setRemVisible(true);
+			folders.get(0).setRemVisible(true);//Can click on "-"
+			
+			//Else if there are no Layout (not possible)
 		} else if (folders.isEmpty()) {
-			System.err.println("Not folders found, click on \"+\"");
+			System.err.println("Not folders found, click on \"+\"");//Error Message
+			
+			//Else set button to can't click
 		} else {
 			folders.get(0).setRemVisible(false);
 		}
 	}
 
+	/**
+	 * Print SearchResult
+	 * @param fold
+	 */
 	public void printODT(HashMap<String, Folder> fold) {
+		
+		//List construction
 		DefaultListModel<String> model = new DefaultListModel<String>();
 		for(String key : fold.keySet()){
-			for (Document d : fold.get(key).DocSorting()) {
+			for (Document d : fold.get(key).docSort()) {
 				model.addElement(d.getPath());
 			}
 		}
+		//Update display
 		results.setModel(model);
 		refresh();
 	}
 
+	/**
+	 * Open an odt with the default program on OS
+	 * @param path
+	 */
 	public void openODT(String path) {
+		
 		if (Desktop.isDesktopSupported()) {
 			if (Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
 				try {
@@ -207,74 +251,85 @@ public class GraphInter extends JFrame {
 		}
 	}
 
+	/**
+	 * Update Action
+	 * @param foldersToUpdate
+	 */
 	public void updateFolders(ArrayList<LayoutFolder> foldersToUpdate) {
+		//Bdd creation
 		Storage bdd = new Storage(".");
+		
+		//Do a copy of folders
 		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) foldersToUpdate.clone();
+		
+		//Clean empty and false path
 		clean(askFolders);
+		
+		//Write folders on database
 		for (LayoutFolder lf : askFolders) {
 			Folder f = new Folder(lf.getText());
 			bdd.writeFolder(f);
 		}
+		
+		//Display successful action
 		System.err.println("End of Update");
 
 	}
-
+	
+	/**
+	 * Search Action
+	 */
 	public void searchInFolders(){
+		
 		HashMap<String, Folder> hmFolders = new HashMap<String, Folder>();
 		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
+		
+		//Read bdd and check if all folder are knows
 		if (readInBdd(askFolders, hmFolders)){
-			updateFolders(askFolders);
-			readInBdd(askFolders, hmFolders);
+			updateFolders(askFolders); //If it isn't update not find folders
+			readInBdd(askFolders, hmFolders); //And read a second time
 		}
 		
+		//Split String to words
 		String[] keyWordsString = keyWords.getText().split(" ");
+		
+		//Transform table to ArrayList
 		ArrayList<String> listKeyWords = new ArrayList<String>();
-		/*int begin = 0;
-		boolean hasOrOperator = true;
-		if(keyWordsString[0].equals("-")){
-			begin = 1;
-		}
-		else if(keyWordsString[0].equals("+")){
-			hasOrOperator = false;
-			begin = 1;
-		}
-		boolean isInQuote = false;
-		String strInQuote = "";
-		for(int i = begin; i < keyWordsString.length; i++){
-			if(keyWordsString[i].charAt(0) == '\"'){
-				isInQuote = true;
-			}
-			if(isInQuote == true){
-				if(keyWordsString[i].charAt(keyWordsString[i].length() - 1) == '\"'){
-					isInQuote = false;
-					strInQuote += keyWordsString[i].replaceAll("\"", "");
-					listKeyWords.add(strInQuote);
-				}
-				else{
-					strInQuote += keyWordsString[i].replaceAll("\"", "") + " ";
-				}
-			}
-			else{
-				listKeyWords.add(keyWordsString[i]);
-			}
-		}*/
 		for(int i = 0; i < keyWordsString.length; i++){
 			listKeyWords.add(keyWordsString[i]);
 		}
 		
+		//Make the keywords search
 		for(String key : hmFolders.keySet()){
 			hmFolders.get(key).searchWords(listKeyWords);
 		}
+		
+		//Send results to JList
 		printODT(hmFolders);
+		
+		//Search is successful 
 		System.err.println("End of search");
 		
 	}
 
+	/**
+	 * Read folders in bdd
+	 * @param askFolders
+	 * @param hmFolders
+	 * @return
+	 */
 	public boolean readInBdd(ArrayList<LayoutFolder> askFolders, HashMap<String, Folder> hmFolders) {
+		
 		HashMap<String, Folder> bddTotal;
 		Storage bdd = new Storage(".");
+		
+		//Read IO
 		bddTotal = bdd.readFolder();
+		
+		//Clean empty and false path
 		clean(askFolders);
+		
+		//Check if folders are all knows
 		for (String key : bddTotal.keySet()) {
 			for (LayoutFolder lf : askFolders) {
 				if (lf.getText().equals(key)) {
@@ -284,19 +339,29 @@ public class GraphInter extends JFrame {
 				}
 			}
 		}
+		
+		//Return if folders are all knows
 		return !askFolders.isEmpty();
 	}
 
+	/**
+	 * Clean empty and false path
+	 * @param askFolders
+	 */
 	public void clean(ArrayList<LayoutFolder> askFolders) {
+		
 		String message = "";
 		ArrayList<LayoutFolder> askFoldersCopy = (ArrayList<LayoutFolder>) askFolders.clone();
+		
 		for (LayoutFolder lf : askFolders) {
+			//If the path is empty, remove it
 			if (lf.getText().isEmpty()) {
 				askFoldersCopy.remove(lf);
 			}
 			else{
 				try{
 					File rep = new File(lf.getText());
+					//If the path is not a folder or a file, remove it
 					if(!rep.exists()){
 						message += lf.getText() + " n'existe pas\n";
 						askFoldersCopy.remove(lf);
@@ -311,31 +376,43 @@ public class GraphInter extends JFrame {
 			}
 		}
 		askFolders = askFoldersCopy;
+		
+		//If error messages wrote
 		if(!message.isEmpty()){
+			//print them
 			System.err.println(message);
 		}
 	}
 
+	/**
+	 * Refresh window Display
+	 */
 	public void refresh() {
 		setContentPane(mainPanel);
 	}
 
-	/*
-	 * public void printError(String error){ errorArea.setText(error);
-	 * refresh(); }
+	/**
+	 * Get zone of error messages
+	 * @return
 	 */
-
 	public JTextArea getErrorArea() {
 		return errorArea;
 	}
 
-	// Class to represent folder creation
+	/**
+	 * Class to represent folder creation
+	 * @author ABADJI Julien & LEPESANT Bastien
+	 *
+	 */
 	public class LayoutFolder {
 
 		private JTextField folder;
 		private JButton searchDirectory;
 		private JButton rem;
 
+		/**
+		 * Constructor
+		 */
 		public LayoutFolder() {
 			folder = new JTextField();
 			folder.addActionListener(new ActionUpdate());
@@ -345,15 +422,27 @@ public class GraphInter extends JFrame {
 			rem.addActionListener(new ActionRem(this));
 		}
 
+		/**
+		 * Get the text in JTextField
+		 * @return
+		 */
 		public String getText() {
 			return folder.getText();
 		}
 		
+		/**
+		 * Set the text in JTextField
+		 * @param text
+		 */
 		public void setText(String text){
 			folder.setText(text);
 		}
 
-		// Add the line to Window
+		/**
+		 * Add the line to Window
+		 * @param panel
+		 * @param posY
+		 */
 		public void addInPanel(JPanel panel, int posY) {
 			GridBagConstraints pos = new GridBagConstraints();
 			folders.add(this);
@@ -377,7 +466,10 @@ public class GraphInter extends JFrame {
 			updateRemVisible();
 		}
 
-		// Remove the line to Window
+		/**
+		 * Remove the line to Window
+		 * @param panel
+		 */
 		public void removeInPanel(JPanel panel) {
 			panel.remove(folder);
 			panel.remove(searchDirectory);
@@ -386,10 +478,17 @@ public class GraphInter extends JFrame {
 			updateRemVisible();
 		}
 
+		/**
+		 * Do the Rem Button Visible
+		 * @param visible
+		 */
 		public void setRemVisible(boolean visible) {
 			rem.setEnabled(visible);
 		}
 
+		/**
+		 * ToString
+		 */
 		public String toString() {
 			return "JTextField : " + folder.toString() + "JButton dir: "
 					+ searchDirectory.toString() + "\nJButton Rem : "
@@ -397,11 +496,18 @@ public class GraphInter extends JFrame {
 		}
 	}
 
-	// ******************************ACTION
-	// Class's******************************
+	// ******************************ACTION Class's******************************
 
+	/**
+	 * Action of "+" button
+	 * @author ABADJI Julien & LEPESANT Bastien
+	 *
+	 */
 	public class ActionAdd implements ActionListener {
 
+		/**
+		 * Add Layout Folder
+		 */
 		public void actionPerformed(ActionEvent arg0) {
 			LayoutFolder newFolder = new LayoutFolder();
 			newFolder.addInPanel(topPanel, nbFolderCreate);
@@ -410,16 +516,28 @@ public class GraphInter extends JFrame {
 
 	}
 
+	/**
+	 * Action of "-" button
+	 * @author eresia
+	 *@author ABADJI Julien & LEPESANT Bastien
+	 */
 	public class ActionRem implements ActionListener {
 
 		private LayoutFolder folder;
 
+		/**
+		 * Constructor
+		 * @param folder
+		 */
 		public ActionRem(LayoutFolder folder) {
 			super();
 			this.folder = folder;
 		}
 
 		@Override
+		/**
+		 * Remove Layout Folder if it is not the last
+		 */
 		public void actionPerformed(ActionEvent arg0) {
 			if (folders.size() > 1) {
 				folder.removeInPanel(topPanel);
@@ -430,15 +548,27 @@ public class GraphInter extends JFrame {
 
 	}
 
+	/**
+	 * Action of the "Folder" Button
+	 * @author ABADJI Julien & LEPESANT Bastien
+	 *
+	 */
 	public class ActionDirectory implements ActionListener {
 
 		private JTextField text;
 
+		/**
+		 * Constructor
+		 * @param text
+		 */
 		public ActionDirectory(JTextField text) {
 			this.text = text;
 		}
 
 		@Override
+		/**
+		 * Open File Explorator of the OS
+		 */
 		public void actionPerformed(ActionEvent arg0) {
 			JFileChooser but = new JFileChooser();
 			but.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -449,9 +579,17 @@ public class GraphInter extends JFrame {
 
 	}
 
+	/**
+	 * Action of Search button
+	 * @author ABADJI Julien & LEPESANT Bastien
+	 *
+	 */
 	public class ActionSearch implements ActionListener {
 
 		@Override
+		/**
+		 * Call searchInFolders 
+		 */
 		public void actionPerformed(ActionEvent arg0) {
 			searchInFolders();
 
@@ -459,9 +597,17 @@ public class GraphInter extends JFrame {
 
 	}
 
+	/**
+	 * Action of Update button
+	 * @author ABADJI Julien & LEPESANT Bastien
+	 *
+	 */
 	public class ActionUpdate implements ActionListener {
 
 		@Override
+		/**
+		 * Call updateFolders
+		 */
 		public void actionPerformed(ActionEvent arg0) {
 			updateFolders(folders);
 
@@ -469,9 +615,17 @@ public class GraphInter extends JFrame {
 
 	}
 
+	/**
+	 * Action if enter to JList
+	 * @author ABADJI Julien & LEPESANT Bastien
+	 *
+	 */
 	public class ActionEnterList implements KeyListener {
 
 		@Override
+		/**
+		 * Open the file
+		 */
 		public void keyPressed(KeyEvent arg0) {
 			if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 				openODT(results.getSelectedValue());
@@ -479,21 +633,35 @@ public class GraphInter extends JFrame {
 		}
 
 		@Override
+		/**
+		 * Not used
+		 */
 		public void keyReleased(KeyEvent arg0) {
 			// TODO Auto-generated method stub
 
 		}
 
 		@Override
+		/**
+		 * Not used
+		 */
 		public void keyTyped(KeyEvent arg0) {
 			// TODO Auto-generated method stub
 
 		}
 	}
 
+	/**
+	 * Action if double click to JList
+	 * @author ABADJI Julien & LEPESANT Bastien
+	 *
+	 */
 	public class ActionMouseList implements MouseListener {
 
 		@Override
+		/**
+		 * Open the file
+		 */
 		public void mouseClicked(MouseEvent arg0) {
 			if (arg0.getClickCount() == 2) {
 				openODT(results.getSelectedValue());
@@ -501,24 +669,36 @@ public class GraphInter extends JFrame {
 		}
 
 		@Override
+		/**
+		 * Not used
+		 */
 		public void mouseEntered(MouseEvent arg0) {
 			// TODO Auto-generated method stub
 
 		}
 
 		@Override
+		/**
+		 * Not used
+		 */
 		public void mouseExited(MouseEvent arg0) {
 			// TODO Auto-generated method stub
 
 		}
 
 		@Override
+		/**
+		 * Not used
+		 */
 		public void mousePressed(MouseEvent arg0) {
 			// TODO Auto-generated method stub
 
 		}
 
 		@Override
+		/**
+		 * Not used
+		 */
 		public void mouseReleased(MouseEvent arg0) {
 			// TODO Auto-generated method stub
 
