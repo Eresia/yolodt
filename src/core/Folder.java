@@ -87,7 +87,11 @@ public class Folder implements Serializable {
 		if (folder.canRead() && !folder.isHidden()) {
 			if (!folder.isDirectory()) {
 				if (isODT(folder.getPath())) {
-					files.add(new Document(folder.getPath()));
+					try{
+						files.add(new Document(folder.getPath()));
+					}catch(IOException e){
+						System.err.println("Corrompt ODT");
+					}
 				}
 			} else {
 				for (int i = 0; i < folder.list().length; i++) {

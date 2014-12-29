@@ -4,10 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -20,28 +18,27 @@ public class Document implements Serializable{
 	private int weight;
 	private ArrayList<Title> titles;
 	
-	public Document(String path)	
+	public Document(String path) throws IOException	
 	{
 		this.path = path;
 		this.weight = 0;
 		extractTitles();
 	}
-	public void extractTitles(){ //This method handles the unzip, parse and delete temporary folders procedures.
+	public void extractTitles() throws IOException{ //This method handles the unzip, parse and delete temporary folders procedures.
 		String tmpPath = Paths.get(path).getParent()+File.separator+"tmp"; 
 		File tmpFile = new File(tmpPath);
 		String xmlPath = tmpPath+File.separator+"content.xml"; //We need to manipulate paths in two different types, so we have 2 vars by path.
 		File xmlFile = new File(xmlPath);
-		
 		unZip(path, tmpPath.toString());  //Unzips the content.xml onto the temporary folder.
 		titles = parse(xmlPath); //Fills titles with the titles parsed.
 		xmlFile.delete();
 		tmpFile.delete(); //Deletes the temporary files. 
 	}
-	public ArrayList<Title> parse(String path){ //Calls the Parser object.
+	public ArrayList<Title> parse(String path) throws IOException{ //Calls the Parser object.
 		Parser p = new Parser(path);
 		return p.getTitles();
 	}
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	
 	public ArrayList parseSearch(ArrayList<String> words){ //Bails chelou avec des espaces. 
 		boolean hasAndOperator=false;
 		String keyWords="";
@@ -56,7 +53,6 @@ public class Document implements Serializable{
 		for(String word : words){
 			keyWords+=word+" ";
 		}
-		System.out.println(keyWords);
 		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(keyWords);
 		while (m.find()){
 			//System.out.println(m.group(1).replace("\"", ""));
@@ -65,7 +61,7 @@ public class Document implements Serializable{
 		return parsedSearch;
 	}
 	// LOUIS HELPS : Penser aux opérateurs. Wesh
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	
 	public void searchWords(ArrayList<String> unparsedSearch){ 
 		ArrayList parsedSearch = parseSearch(unparsedSearch);
 		boolean hasAndOperator = (boolean) parsedSearch.get(0);
@@ -110,7 +106,7 @@ public class Document implements Serializable{
 				if (ze.getName().equals("content.xml")) { //Search for content.xml, and unzip it.
 					FileOutputStream fos;
 					File newFile = new File(outputFolder + File.separator + ze.getName());
-					System.out.println("file unzip : " + newFile.getAbsoluteFile());
+					System.err.println("file unzip : " + newFile.getAbsoluteFile());
 					fos = new FileOutputStream(newFile);
 					int len;
 					while ((len = zis.read(buffer)) > 0) { //Write.

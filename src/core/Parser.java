@@ -23,21 +23,19 @@ public class Parser {
 	NodeList titleP; //Title in text:p Elements
 	ArrayList<Title> titles; //Contains parsed titles
 	
-	public Parser(String toParse){
+	public Parser(String toParse) throws IOException{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		System.out.println("g");
 		try{
 		builder = factory.newDocumentBuilder();
 		document = builder.parse(new File(toParse));
 		}
 		catch(ParserConfigurationException e){
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 		catch(SAXException e){
-			e.printStackTrace();
-		}
-		catch(IOException e){
-			e.printStackTrace();
-		} // Creating the factory and catching eventual errors.
+			System.err.println(e.getMessage());
+		}// Creating the factory and catching eventual errors.
 		root = document.getDocumentElement(); // We'll navigate through this var
 		grepTitles(); 
 	}
