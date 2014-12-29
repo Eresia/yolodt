@@ -90,7 +90,7 @@ public class Folder implements Serializable {
 					try{
 						files.add(new Document(folder.getPath()));
 					}catch(IOException e){
-						System.err.println("Odt trouvé corrompu");
+						System.err.println("Corrompt ODT");
 					}
 				}
 			} else {
