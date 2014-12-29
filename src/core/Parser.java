@@ -25,7 +25,6 @@ public class Parser {
 	
 	public Parser(String toParse) throws IOException{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		System.out.println("g");
 		try{
 		builder = factory.newDocumentBuilder();
 		document = builder.parse(new File(toParse));

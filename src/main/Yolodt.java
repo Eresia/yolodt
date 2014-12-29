@@ -1,5 +1,6 @@
 package main;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class Yolodt {
 			for(String s: argsList){
 				File f = new File(s);
 				if(!f.isDirectory()){
-					System.out.println("Warning : "+s+" is not a directory : ignored.");
+					System.err.println("Warning : "+s+" is not a directory : ignored.");
 				}else{
 					Folder folderToAdd = new Folder(s);
 					System.out.println(folderToAdd);
@@ -32,9 +33,17 @@ public class Yolodt {
 		else if(args[0].equals("-f")){
 				argsList.remove(0);
 				if(argsList.size()>1 || argsList.size()<=0){
-					System.out.println("Erreur : Nombre de paramètres incorrect");
+					System.err.println("Erreur : Nombre de paramètres incorrect");
+				}else{
+					Document d;
+					try {
+						d = new Document(argsList.get(0));
+						System.out.println(d);
+					} catch (IOException e) {
+						System.err.println("Error : Can't open "+argsList.get(0));
+						e.printStackTrace();
+					}
 				}
-				System.out.println(new Document(argsList.get(0)));
 				
 				
 		}else if(args[0].equals("-w")){

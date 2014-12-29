@@ -106,7 +106,6 @@ public class Document implements Serializable{
 				if (ze.getName().equals("content.xml")) { //Search for content.xml, and unzip it.
 					FileOutputStream fos;
 					File newFile = new File(outputFolder + File.separator + ze.getName());
-					System.err.println("file unzip : " + newFile.getAbsoluteFile());
 					fos = new FileOutputStream(newFile);
 					int len;
 					while ((len = zis.read(buffer)) > 0) { //Write.
