@@ -11,6 +11,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
+
+
+/**
+ * Class for data storage
+ * @author ABADJI Julien & LEPESANT Bastien
+ */
 public class Storage {
 	
 	private String path;
@@ -21,7 +27,11 @@ public class Storage {
 	
 	// FONCTION STOCKAGE**********************************************************************************************************
 
-		// Read HashMap in fileName
+		/**
+		 * Read HashMap in fileName
+		 * @param fileName
+		 * @return
+		 */
 		public HashMap<String, Folder> readFolder(String fileName) {
 			File folder = new File(path);
 			ObjectInputStream ois;
@@ -49,12 +59,19 @@ public class Storage {
 			}
 		}
 		
-		//Read HashMap in "data.db"
+		/**
+		 * Read HashMap in "data.db"
+		 * @return
+		 */
 		public HashMap<String, Folder> readFolder() {
 			return readFolder("data.db");
 		}
 
-		// Write the HashMap in "data.db"
+		/**
+		 * Write the HashMap in "data.db"
+		 * @param fold
+		 * @return
+		 */
 		public boolean writeFolder(Folder fold) {
 			File folder = new File(path);
 			HashMap<String, Folder> data = readFolder();

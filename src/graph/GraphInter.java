@@ -518,7 +518,6 @@ public class GraphInter extends JFrame {
 
 	/**
 	 * Action of "-" button
-	 * @author eresia
 	 *@author ABADJI Julien & LEPESANT Bastien
 	 */
 	public class ActionRem implements ActionListener {
