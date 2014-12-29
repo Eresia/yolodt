@@ -6,14 +6,22 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * Class to represent a folder and his documents
+ * @author ABADJI Julien & LEPESANT Bastien
+ *
+ */
+@SuppressWarnings("serial")
 public class Folder implements Serializable {
 
 	private String path;
 	private ArrayList<Document> docs = new ArrayList<Document>();
 
+	/**
+	 * Constructor
+	 * @param path
+	 */
 	public Folder(String path) {
 		File f = new File(path);
 		
@@ -26,6 +34,10 @@ public class Folder implements Serializable {
 		searchODT();
 	}
 
+	/**
+	 * Get the path of the folder
+	 * @return The path of the folder
+	 */
 	public String getPath() {
 		return path;
 	}
@@ -33,9 +45,11 @@ public class Folder implements Serializable {
 	// FONCTION
 	// IO*****************************************************************************************************************************
 
-	// Creates a temporary folder onto the path of the file.
-	// We can enhance this by using Java's temporary folders.( see TODO ).
-	public File createTmp() { // TODO: voir avec createTempDirectory
+	/**
+	 * Creates a temporary folder onto the path of the file.
+	 * @return the folder created
+	 */
+	public File createTmp() {
 		File folder;
 		try {
 			folder = new File(path + File.separator + "tmp" + File.separator);
@@ -55,21 +69,26 @@ public class Folder implements Serializable {
 
 	}
 
-	public void searchODT() { // Recursively constructs an ArrayList with all
-								// the files with the odt type.
+	/**
+	 * Make ArrayList of ODT in folder and create temporary folder
+	 */
+	public void searchODT() {
+		
 		File folder = new File(path);
 		listDocument(folder, docs);
 
 		if (!docs.isEmpty()) {
-			createTmp(); // We create the temporary files here to avoid useless
-							// creating if the hashmap is empty.
+			createTmp(); // creating if the hashmap is not empty.
 		}
 	}
 
 	// Io Fonctions "lib"
 	// ***********************************************************************************************************************************
 
-	// Recursively delete a Folder and all of its content.
+	/**
+	 * Recursively delete a Folder and all of its content.
+	 * @param file
+	 */
 	public void deleteFolder(File file) {
 		if (file.isDirectory()) {
 			for (int i = 0; i < file.list().length; i++) {
@@ -82,13 +101,18 @@ public class Folder implements Serializable {
 		}
 	}
 
-	// Creates an ArrayList from the folder's content.
+	/**
+	 * Recursively constructs an ArrayList with all the files with the odt type
+	 * @param folder
+	 * @param files
+	 */
 	public void listDocument(File folder, ArrayList<Document> files) {
 		if (folder.canRead() && !folder.isHidden()) {
 			if (!folder.isDirectory()) {
 				if (isODT(folder.getPath())) {
 					try{
 						files.add(new Document(folder.getPath()));
+					//If the ODT is Corrompt or it is a bad extension of file, it is ignored
 					}catch(IOException e){
 						System.err.println("Corrompt ODT");
 					}
@@ -102,7 +126,11 @@ public class Folder implements Serializable {
 		}
 	}
 
-	// Checks if a file is an Open Document Text file.
+	/**
+	 * Checks if a file is an Open Document Text file.
+	 * @param path
+	 * @return If the File is an ODT file
+	 */
 	public boolean isODT(String path) {
 
 		try {
@@ -124,21 +152,29 @@ public class Folder implements Serializable {
 	// On Documents Fonctions
 	// ********************************************************************************************************************************
 
+	/**
+	 * Make the search by keywords in all Documents
+	 * @param words
+	 */
 	public void searchWords(ArrayList<String> words) {
 		for (Document d : docs) {
 			d.searchWords(words);
 		}
 	}
 
+	/**
+	 * Sort all Documents by their weights
+	 * @return The List of sorting documents
+	 */
 	public ArrayList<Document> docSort() {
 		ArrayList<Document> docsSort = new ArrayList<Document>();
 		for (Document docPlacing : docs) {
-			if (docPlacing.getWeight() != 0) {
-				if (docsSort.isEmpty()) {
+			if (docPlacing.getWeight() != 0) { //If Document have a null weight, it is ignored
+				if (docsSort.isEmpty()) { //If the List is empty, make it on the first place
 					docsSort.add(docPlacing);
 				} else {
 					for (Document d : docsSort) {
-						if (d.getWeight() < docPlacing.getWeight()) {
+						if (d.getWeight() < docPlacing.getWeight()) { //Place the Document in right place
 							docsSort.add(docsSort.indexOf(d), docPlacing);
 							break;
 						}
@@ -152,12 +188,18 @@ public class Folder implements Serializable {
 		return docsSort;
 	}
 	
+	/**
+	 * Get the List of the documents
+	 * @return The List of the documents
+	 */
 	public ArrayList<Document> getDocuments(){
 		return docs;
 	}
+	
 
 	// Others Fonctions
 	// ***********************************************************************************************************************************
+
 
 	@Override
 	public String toString() {
@@ -193,6 +235,6 @@ public class Folder implements Serializable {
 		} else if (!path.equals(other.path))
 			return false;
 		return true;
-	}
+	}	
 
 }

@@ -11,19 +11,33 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-
+/**
+ * The class that represent a ODT File
+ * @author ABADJI Julien & LEPESANT Bastien
+ *
+ */
+@SuppressWarnings("serial")
 public class Document implements Serializable{
 
 	private String path;
 	private int weight;
 	private ArrayList<Title> titles;
 	
+	/**
+	 * Constructor
+	 * @param path
+	 * @throws IOException If the file is corrupt
+	 */
 	public Document(String path) throws IOException	
 	{
 		this.path = path;
 		this.weight = 0;
 		extractTitles();
 	}
+	/**
+	 * Unzip and parse an ODT File
+	 * @throws IOException If the File is corrupt
+	 */
 	public void extractTitles() throws IOException{ //This method handles the unzip, parse and delete temporary folders procedures.
 		String tmpPath = Paths.get(path).getParent()+File.separator+"tmp"; 
 		File tmpFile = new File(tmpPath);
@@ -34,61 +48,83 @@ public class Document implements Serializable{
 		xmlFile.delete();
 		tmpFile.delete(); //Deletes the temporary files. 
 	}
+	
+	/**
+	 * Parse the ODT File
+	 * @param path
+	 * @return
+	 * @throws IOException If the File is corrupt
+	 */
 	public ArrayList<Title> parse(String path) throws IOException{ //Calls the Parser object.
 		Parser p = new Parser(path);
 		return p.getTitles();
 	}
 	
-	public ArrayList parseSearch(ArrayList<String> words){ //Bails chelou avec des espaces. 
-		boolean hasAndOperator=false;
+	/**
+	 * Check operator about keywords
+	 * @param words
+	 * @return An ArrayList with informations
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ArrayList parseSearch(ArrayList<String> words){
+		boolean hasAndOperator=false; // LOUIS HELPS : Think to operator. Wesh
 		String keyWords="";
 		ArrayList parsedSearch = new ArrayList();
-		if(words.get(0).equals("+")){
+		if(words.get(0).equals("+")){ //If "+", it is AND operator
 			hasAndOperator = true;
 			words.remove(0);
-		}else if(words.get(0).equals("-")){
+		}else if(words.get(0).equals("-")){ //If "-" or nothing, it is OR operator
 			words.remove(0);
 		}
 		parsedSearch.add(hasAndOperator);
 		for(String word : words){
 			keyWords+=word+" ";
 		}
-		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(keyWords);
+		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(keyWords); //Group word between quotes
 		while (m.find()){
-			//System.out.println(m.group(1).replace("\"", ""));
 		    parsedSearch.add(m.group(1).replace("\"", ""));
 		}
 		return parsedSearch;
 	}
-	// LOUIS HELPS : Penser aux opérateurs. Wesh
 	
+	/**
+	 * Do search by keywords in Documents
+	 * @param unparsedSearch
+	 */
 	public void searchWords(ArrayList<String> unparsedSearch){ 
-		ArrayList parsedSearch = parseSearch(unparsedSearch);
+		@SuppressWarnings("rawtypes")
+		ArrayList parsedSearch = parseSearch(unparsedSearch); //Check operators informations
 		boolean hasAndOperator = (boolean) parsedSearch.get(0);
 		parsedSearch.remove(0);
+		@SuppressWarnings("unchecked")
 		ArrayList<String> words = (ArrayList<String>) parsedSearch;
 		weight = 0;
-		boolean[] used = new boolean[parsedSearch.size()];
+		boolean[] used = new boolean[parsedSearch.size()]; //Table to check if one word is not used
 		for(int i = 0 ; i < parsedSearch.size(); i++){
 			used[i] = false;
 		}
 		for(Title t : titles){
 			for(String w : words){
 				if(t.getTitle().contains(w)){
-					weight += 5 - t.getHeight();
+					weight += 5 - t.getHeight(); //Affect a weight to document
 					used[words.indexOf(w)] = true;
 				}
 			}
 		}
-		if(hasAndOperator){
+		if(hasAndOperator){ //If it is AND operator
 			for(int i = 0; i < words.size(); i++){
-				if(used[i] == false){
-					weight = 0;
+				if(used[i] == false){ //If one word is not used
+					weight = 0; //The ODT has not weight
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Unzip the ODT
+	 * @param zipFile
+	 * @param outputFolder
+	 */
 	public void unZip(String zipFile, String outputFolder) { //Unzips ONLY the 'content.xml' on the odt file.
 		byte[] buffer = new byte[1024];
 		try {
@@ -119,35 +155,41 @@ public class Document implements Serializable{
 			zis.closeEntry();
 			zis.close(); //We close what we opened.
 
-			//System.out.println("Done");
-
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Get the path
+	 * @return The path
+	 */
 	public String getPath() {
 		return path;
 	}
 	
+	/**
+	 * Get the weight
+	 * @return The weight
+	 */
 	public int getWeight(){
 		return weight;
 	}
 	
+	/**
+	 * Get the titles
+	 * @return The titles
+	 */
 	public ArrayList<Title> getTitles(){
 		return titles;
 	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-	
-	
 	
 	@Override
 	public String toString() {
 		return "Document [path=" + path + ", weight=" + weight + ", titles="
 				+ titles + "]";
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -157,6 +199,7 @@ public class Document implements Serializable{
 		result = prime * result + weight;
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -180,6 +223,5 @@ public class Document implements Serializable{
 			return false;
 		return true;
 	}
-
 	
 }

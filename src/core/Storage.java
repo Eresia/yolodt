@@ -30,8 +30,9 @@ public class Storage {
 		/**
 		 * Read HashMap in fileName
 		 * @param fileName
-		 * @return
+		 * @return One HashMap that contains read Folders
 		 */
+		@SuppressWarnings("unchecked")
 		public HashMap<String, Folder> readFolder(String fileName) {
 			File folder = new File(path);
 			ObjectInputStream ois;
@@ -61,7 +62,7 @@ public class Storage {
 		
 		/**
 		 * Read HashMap in "data.db"
-		 * @return
+		 * @return One HashMap that contains read Folders
 		 */
 		public HashMap<String, Folder> readFolder() {
 			return readFolder("data.db");
@@ -70,7 +71,7 @@ public class Storage {
 		/**
 		 * Write the HashMap in "data.db"
 		 * @param fold
-		 * @return
+		 * @return A boolean that check the success
 		 */
 		public boolean writeFolder(Folder fold) {
 			File folder = new File(path);
@@ -98,5 +99,12 @@ public class Storage {
 				return false;
 			}
 		}
+
+		@Override
+		public String toString() {
+			return "Storage [path=" + path + "]";
+		}
+		
+		
 
 }

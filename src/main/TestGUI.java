@@ -3,10 +3,6 @@ package main;
 import graph.CustomErrStream;
 import graph.GraphInter;
 
-import java.util.HashMap;
-
-import core.Folder;
-
 
 /**
  * GUI main
@@ -27,7 +23,6 @@ public class TestGUI {
 		try{
 			System.setErr(new CustomErrStream(gui.getErrorArea()));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

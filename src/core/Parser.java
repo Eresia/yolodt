@@ -12,6 +12,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+/**
+ * Class used to parse a XML
+ * @author ABADJI Julien & LEPESANT Bastien
+ *
+ */
 public class Parser {
 	DocumentBuilder builder;
 	Document document;
@@ -23,6 +28,11 @@ public class Parser {
 	NodeList titleP; //Title in text:p Elements
 	ArrayList<Title> titles; //Contains parsed titles
 	
+	/**
+	 * Constructor
+	 * @param toParse
+	 * @throws IOException
+	 */
 	public Parser(String toParse) throws IOException{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try{
@@ -39,6 +49,9 @@ public class Parser {
 		grepTitles(); 
 	}
 	
+	/**
+	 * Take titles to XML and put it in ArrayList
+	 */
 	public void grepTitles(){
 		titles = new ArrayList<Title>();
 		textP = root.getElementsByTagName("text:p"); //We get all the "text:p" and "text:h" elements recursively
@@ -63,6 +76,11 @@ public class Parser {
 			}
 		}
 	}
+	
+	/**
+	 * Get the ArrayList of the titles
+	 * @return The ArrayList of the titles
+	 */
 	public ArrayList<Title> getTitles(){
 		return titles;
 	}

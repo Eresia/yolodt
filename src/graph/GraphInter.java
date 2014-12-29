@@ -33,6 +33,7 @@ import core.Storage;
  * Class for GUI
  * @author ABADJI Julien & LEPESANT Bastien
  */
+@SuppressWarnings("serial")
 public class GraphInter extends JFrame {
 
 	//Buttons
@@ -278,6 +279,7 @@ public class GraphInter extends JFrame {
 	public void displayFolders(){
 		
 		HashMap<String, Folder> fold = new HashMap<String, Folder>();
+		@SuppressWarnings("unchecked")
 		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
 		
 		readInDtb(askFolders, fold);
@@ -329,6 +331,7 @@ public class GraphInter extends JFrame {
 		Storage dtb = new Storage(".");
 		
 		//Do a copy of folders
+		@SuppressWarnings("unchecked")
 		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) foldersToUpdate.clone();
 		
 		//Clean empty and false path
@@ -351,6 +354,7 @@ public class GraphInter extends JFrame {
 	public void searchInFolders(){
 		
 		HashMap<String, Folder> hmFolders = new HashMap<String, Folder>();
+		@SuppressWarnings("unchecked")
 		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
 		
 		//Read dtb and check if all folder are knows
@@ -385,7 +389,7 @@ public class GraphInter extends JFrame {
 	 * Read folders in dtb
 	 * @param askFolders
 	 * @param hmFolders
-	 * @return
+	 * @return If folders are all knows
 	 */
 	public boolean readInDtb(ArrayList<LayoutFolder> askFolders, HashMap<String, Folder> hmFolders) {
 		
@@ -420,6 +424,7 @@ public class GraphInter extends JFrame {
 	public void clean(ArrayList<LayoutFolder> askFolders) {
 		
 		String message = "";
+		@SuppressWarnings("unchecked")
 		ArrayList<LayoutFolder> askFoldersCopy = (ArrayList<LayoutFolder>) askFolders.clone();
 		
 		for (LayoutFolder lf : askFolders) {
@@ -462,7 +467,7 @@ public class GraphInter extends JFrame {
 
 	/**
 	 * Get zone of error messages
-	 * @return
+	 * @return The error messages area
 	 */
 	public JTextArea getErrorArea() {
 		return errorArea;
@@ -471,7 +476,6 @@ public class GraphInter extends JFrame {
 	/**
 	 * Class to represent folder creation
 	 * @author ABADJI Julien & LEPESANT Bastien
-	 *
 	 */
 	public class LayoutFolder {
 
@@ -493,7 +497,7 @@ public class GraphInter extends JFrame {
 
 		/**
 		 * Get the text in JTextField
-		 * @return
+		 * @return The text in JTextField 
 		 */
 		public String getText() {
 			return folder.getText();
@@ -602,10 +606,10 @@ public class GraphInter extends JFrame {
 			this.folder = folder;
 		}
 
-		@Override
 		/**
 		 * Remove Layout Folder if it is not the last
 		 */
+		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if (folders.size() > 1) {
 				folder.removeInPanel(topPanel);
@@ -633,10 +637,10 @@ public class GraphInter extends JFrame {
 			this.text = text;
 		}
 
-		@Override
 		/**
 		 * Open File Explorator of the OS
 		 */
+		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			JFileChooser but = new JFileChooser();
 			but.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -654,10 +658,10 @@ public class GraphInter extends JFrame {
 	 */
 	public class ActionSearch implements ActionListener {
 
-		@Override
 		/**
 		 * Call fonctions of dtb dependant to text zones
 		 */
+		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			
 			boolean allIsEmpty = true;
@@ -694,10 +698,10 @@ public class GraphInter extends JFrame {
 	 */
 	public class ActionUpdate implements ActionListener {
 
-		@Override
 		/**
 		 * Call updateFolders
 		 */
+		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			updateFolders(folders);
 
@@ -712,31 +716,29 @@ public class GraphInter extends JFrame {
 	 */
 	public class ActionEnterList implements KeyListener {
 
-		@Override
 		/**
 		 * Open the file
 		 */
+		@Override
 		public void keyPressed(KeyEvent arg0) {
 			if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 				openODT(results.getSelectedValue());
 			}
 		}
 
-		@Override
 		/**
 		 * Not used
 		 */
+		@Override
 		public void keyReleased(KeyEvent arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
-		@Override
 		/**
 		 * Not used
 		 */
+		@Override
 		public void keyTyped(KeyEvent arg0) {
-			// TODO Auto-generated method stub
 
 		}
 	}
@@ -748,52 +750,62 @@ public class GraphInter extends JFrame {
 	 */
 	public class ActionMouseList implements MouseListener {
 
-		@Override
 		/**
 		 * Open the file
 		 */
+		@Override
 		public void mouseClicked(MouseEvent arg0) {
 			if (arg0.getClickCount() == 2) {
 				openODT(results.getSelectedValue());
 			}
 		}
 
-		@Override
 		/**
 		 * Not used
 		 */
+		@Override
 		public void mouseEntered(MouseEvent arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
-		@Override
 		/**
 		 * Not used
 		 */
+		@Override
 		public void mouseExited(MouseEvent arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
-		@Override
 		/**
 		 * Not used
 		 */
+		@Override
 		public void mousePressed(MouseEvent arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
-		@Override
 		/**
 		 * Not used
 		 */
+		@Override
 		public void mouseReleased(MouseEvent arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
 	}
+
+	@Override
+	public String toString() {
+		return "GraphInter [updateButton=" + updateButton + ", searchButton="
+				+ searchButton + ", addButton=" + addButton + ", keyWords="
+				+ keyWords + ", mainPanel=" + mainPanel + ", topPanel="
+				+ topPanel + ", folders=" + folders + ", botPanel=" + botPanel
+				+ ", results=" + results + ", errorArea=" + errorArea
+				+ ", nbFolderCreate=" + nbFolderCreate + ", sizeX=" + sizeX
+				+ ", sizeY=" + sizeY + ", margin=" + margin + ", interMargin="
+				+ interMargin + "]";
+	}
+	
+	
 
 }

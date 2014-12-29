@@ -1,31 +1,43 @@
 package core;
 import java.io.Serializable;
 
+/**
+ * Class that represent a Title in ODT
+ * @author ABADJI Julien & LEPESANT Bastien
+ *
+ */
+@SuppressWarnings("serial")
 public class Title  implements Serializable{
 
 	private String title; //Text of the title
 	private int height; //Title's level. Used for the search.
 
+	/**
+	 * Constructor
+	 * @param title
+	 * @param height
+	 */
 	public Title(String title, int height) {
 		this.title = title;
 		this.height = height;
 	}
 
+	/**
+	 * Get the text of the title
+	 * @return The text of the title
+	 */
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
+	/**
+	 * Get the height of the title
+	 * @return The height of the title
+	 */
 	public int getHeight() {
 		return height;
 	}
 
-	public void setHeight(int height) {
-		this.height = height;
-	}
 	@Override
 	public String toString() {
 		return "Title [title=" + title + ", height=" + height + "]";
@@ -60,5 +72,4 @@ public class Title  implements Serializable{
 	}
 	
 	
-
 }
