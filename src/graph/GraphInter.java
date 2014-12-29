@@ -207,22 +207,24 @@ public class GraphInter extends JFrame {
 		}
 	}
 
-	public void updateFolders() {
+	public void updateFolders(ArrayList<LayoutFolder> foldersToUpdate) {
 		Storage bdd = new Storage(".");
-		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
+		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) foldersToUpdate.clone();
 		clean(askFolders);
 		for (LayoutFolder lf : askFolders) {
 			Folder f = new Folder(lf.getText());
 			bdd.writeFolder(f);
 		}
+		System.err.println("End of Update");
 
 	}
 
 	public void searchInFolders(){
 		HashMap<String, Folder> hmFolders = new HashMap<String, Folder>();
-		if (readInBdd(hmFolders)){
-			updateFolders();
-			readInBdd(hmFolders);
+		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
+		if (readInBdd(askFolders, hmFolders)){
+			updateFolders(askFolders);
+			readInBdd(askFolders, hmFolders);
 		}
 		
 		String[] keyWordsString = keyWords.getText().split(" ");
@@ -261,14 +263,14 @@ public class GraphInter extends JFrame {
 			hmFolders.get(key).searchWords(listKeyWords, hasOrOperator);
 		}
 		printODT(hmFolders);
+		System.err.println("End of search");
 		
 	}
 
-	public boolean readInBdd(HashMap<String, Folder> hmFolders) {
+	public boolean readInBdd(ArrayList<LayoutFolder> askFolders, HashMap<String, Folder> hmFolders) {
 		HashMap<String, Folder> bddTotal;
 		Storage bdd = new Storage(".");
 		bddTotal = bdd.readFolder();
-		ArrayList<LayoutFolder> askFolders = (ArrayList<LayoutFolder>) folders.clone();
 		clean(askFolders);
 		for (String key : bddTotal.keySet()) {
 			for (LayoutFolder lf : askFolders) {
@@ -456,7 +458,7 @@ public class GraphInter extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			updateFolders();
+			updateFolders(folders);
 
 		}
 
