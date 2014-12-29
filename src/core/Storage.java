@@ -33,7 +33,7 @@ public class Storage {
 								+ File.separator + fileName)));
 				try {
 					while (true) {
-						fold.put((String) ois.readObject(), (Folder) ois.readObject());
+						fold = (HashMap<String, Folder>) ois.readObject();
 					}
 				} catch (EOFException e) {
 					ois.close();
@@ -57,28 +57,14 @@ public class Storage {
 		// Ecrit l'HashMap dans le "data.db"
 		public boolean writeFolder(Folder fold) {
 			File folder = new File(path);
-			boolean hasAnc = false;
-			File ancDb = new File(folder.getAbsolutePath() + File.separator + "data.db");
-			if(ancDb.exists()){
-				ancDb.renameTo(ancDb = new File(folder.getAbsolutePath() + File.separator + "data.db-a"));
-				hasAnc = true;
-			}
+			HashMap<String, Folder> data = readFolder();
+			data.put(fold.getPath(), fold);
 			
 			if (folder.isDirectory()) {
 				try {
 					FileOutputStream fos = new FileOutputStream(folder.getAbsolutePath() + File.separator + "data.db");
 					ObjectOutputStream oos = new ObjectOutputStream(fos);
-					if(hasAnc)
-					{
-						HashMap<String, Folder> ancData =  readFolder("data.db-a");
-						for(String key : ancData.keySet()){
-							oos.writeObject(key);
-							oos.writeObject(ancData.get(key));
-						}
-						ancDb.delete();
-					}
-					oos.writeObject(fold.getPath());
-					oos.writeObject(fold);
+					oos.writeObject(data);
 					fos.close();
 					oos.close();
 					return true;
