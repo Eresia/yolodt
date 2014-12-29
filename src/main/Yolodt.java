@@ -9,14 +9,28 @@ import core.Document;
 import core.Folder;
 import core.Storage;
 
+/**
+ * CLI main
+ * @author ABADJI Julien & LEPESANT Bastien
+ *
+ */
 public class Yolodt {
 
 	/**
+	 * Console main
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ArrayList<String> argsList = new ArrayList<String>(Arrays.asList(args)); //For more convinience, we convert the arguments' array onto an ArrayList.
-		if(args[0].equals("-d")){ // -d means adding a directory to the database.
+		ArrayList<String> argsList = new ArrayList<String>(Arrays.asList(args)); //For more convenience, we convert the arguments' array onto an ArrayList.
+		if(args.length == 0){ //If no argument
+			System.err.println(
+					"Error : Invalid arguments.\n"
+					+ "Usage :\n"
+					+ " -d <dir1> <dir2> ... : Add directories to database \n "
+					+ "-f <file> : Read file informations \n "
+					+ "-w <word1> <word2> ... : Search onto the database\n");
+		}
+		else if(args[0].equals("-d")){ // -d means adding a directory to the database.
 			Storage storage = new Storage("."); //We open the storage object to the current path
 			argsList.remove(0); //Since we don't need the -d argument now, we remove it from the list.
 			for(String s: argsList){ //The for loop makes the program handle multiple path additions.
@@ -68,7 +82,7 @@ public class Yolodt {
 					+ "Usage :\n"
 					+ " -d <dir1> <dir2> ... : Add directories to database \n "
 					+ "-f <file> : Read file informations \n "
-					+ "-w <words> : Search onto the database\n");
+					+ "-w <word1> <word2> ... : Search onto the database\n");
 		}
 }
 }
