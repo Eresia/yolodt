@@ -25,7 +25,7 @@ public class CustomErrStream extends PrintStream {
 
 	/**
 	 * Print a String in flux
-	 * @param x
+	 * @param message
 	 */
 	@Override
 	public void println(String message) {

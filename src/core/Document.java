@@ -52,7 +52,7 @@ public class Document implements Serializable{
 	/**
 	 * Parse the ODT File
 	 * @param path
-	 * @return
+	 * @return The List of the titles
 	 * @throws IOException If the File is corrupt
 	 */
 	public ArrayList<Title> parse(String path) throws IOException{ //Calls the Parser object.
