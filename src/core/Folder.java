@@ -120,9 +120,9 @@ public class Folder implements Serializable {
 	// On Documents Fonctions
 	// ********************************************************************************************************************************
 
-	public void searchWords(ArrayList<String> words, boolean hasOrOperator) {
+	public void searchWords(ArrayList<String> words) {
 		for (Document d : docs) {
-			d.searchWords(words, hasOrOperator);
+			d.searchWords(words);
 		}
 	}
 
