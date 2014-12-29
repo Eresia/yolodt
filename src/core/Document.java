@@ -41,9 +41,8 @@ public class Document implements Serializable{
 		Parser p = new Parser(path);
 		return p.getTitles();
 	}
-	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public ArrayList parseSearch(ArrayList<String> words){
+	public ArrayList parseSearch(ArrayList<String> words){ //Bails chelou avec des espaces. 
 		boolean hasAndOperator=false;
 		String keyWords="";
 		ArrayList parsedSearch = new ArrayList();
@@ -55,30 +54,37 @@ public class Document implements Serializable{
 		}
 		parsedSearch.add(hasAndOperator);
 		for(String word : words){
-			keyWords.concat(word+" ");
+			keyWords+=word+" ";
 		}
+		System.out.println(keyWords);
 		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(keyWords);
 		while (m.find()){
+			//System.out.println(m.group(1).replace("\"", ""));
 		    parsedSearch.add(m.group(1).replace("\"", ""));
 		}
 		return parsedSearch;
 	}
 	// LOUIS HELPS : Penser aux opérateurs. Wesh
-	public void searchWords(ArrayList<String> words, boolean hasOrOperator){ 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void searchWords(ArrayList<String> unparsedSearch){ 
+		ArrayList parsedSearch = parseSearch(unparsedSearch);
+		boolean hasAndOperator = (boolean) parsedSearch.get(0); //TODO: Modifier la suite, vu que hasOrOperator existe plus et que hasAndOperator existe.
+		parsedSearch.remove(0);
+		ArrayList<String> words = (ArrayList<String>) parsedSearch;
 		weight = 0;
-		boolean[] used = new boolean[words.size()];
-		for(int i = 0 ; i < words.size(); i++){
+		boolean[] used = new boolean[parsedSearch.size()];
+		for(int i = 0 ; i < parsedSearch.size(); i++){
 			used[i] = false;
 		}
 		for(Title t : titles){
 			for(String w : words){
 				if(t.getTitle().contains(w)){
-					weight += 6 - t.getHeight();
+					weight += 5 - t.getHeight();
 					used[words.indexOf(w)] = true;
 				}
 			}
 		}
-		if(!hasOrOperator){
+		if(hasAndOperator){
 			for(int i = 0; i < words.size(); i++){
 				if(used[i] == false){
 					weight = 0;
