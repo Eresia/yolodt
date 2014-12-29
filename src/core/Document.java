@@ -68,7 +68,7 @@ public class Document implements Serializable{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void searchWords(ArrayList<String> unparsedSearch){ 
 		ArrayList parsedSearch = parseSearch(unparsedSearch);
-		boolean hasAndOperator = (boolean) parsedSearch.get(0); //TODO: Modifier la suite, vu que hasOrOperator existe plus et que hasAndOperator existe.
+		boolean hasAndOperator = (boolean) parsedSearch.get(0);
 		parsedSearch.remove(0);
 		ArrayList<String> words = (ArrayList<String>) parsedSearch;
 		weight = 0;

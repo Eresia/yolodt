@@ -126,7 +126,7 @@ public class Folder implements Serializable {
 		}
 	}
 
-	public ArrayList<Document> DocSorting() {
+	public ArrayList<Document> docSort() {
 		ArrayList<Document> docsSort = new ArrayList<Document>();
 		for (Document docPlacing : docs) {
 			if (docPlacing.getWeight() != 0) {
