@@ -231,27 +231,27 @@ public class GraphInter extends JFrame {
 		ArrayList<String> listKeyWords = new ArrayList<String>();
 		int begin = 0;
 		boolean hasOrOperator = true;
-		if(keyWordsString[0].equals("+")){
+		if(keyWordsString[0].equals("-")){
 			begin = 1;
 		}
-		else if(keyWordsString[0].equals("-")){
+		else if(keyWordsString[0].equals("+")){
 			hasOrOperator = false;
 			begin = 1;
 		}
 		boolean isInQuote = false;
 		String strInQuote = "";
 		for(int i = begin; i < keyWordsString.length; i++){
-			if(keyWordsString[i].charAt(0) == '\''){
+			if(keyWordsString[i].charAt(0) == '\"'){
 				isInQuote = true;
 			}
 			if(isInQuote == true){
-				if(keyWordsString[i].charAt(keyWordsString[i].length()) == '\''){
+				if(keyWordsString[i].charAt(keyWordsString[i].length() - 1) == '\"'){
 					isInQuote = false;
-					strInQuote += keyWordsString[i].replaceAll("\'", "");
+					strInQuote += keyWordsString[i].replaceAll("\"", "");
 					listKeyWords.add(strInQuote);
 				}
 				else{
-					strInQuote += keyWordsString[i].replaceAll("\'", "") + " ";
+					strInQuote += keyWordsString[i].replaceAll("\"", "") + " ";
 				}
 			}
 			else{
@@ -286,28 +286,30 @@ public class GraphInter extends JFrame {
 
 	public void clean(ArrayList<LayoutFolder> askFolders) {
 		String message = "";
+		ArrayList<LayoutFolder> askFoldersCopy = (ArrayList<LayoutFolder>) askFolders.clone();
 		for (LayoutFolder lf : askFolders) {
 			if (lf.getText().isEmpty()) {
-				askFolders.remove(lf);
+				askFoldersCopy.remove(lf);
 			}
 			else{
 				try{
 					File rep = new File(lf.getText());
 					if(!rep.exists()){
-						message += lf.getText() + " n'existe pas";
-						askFolders.remove(lf);
+						message += lf.getText() + " n'existe pas\n";
+						askFoldersCopy.remove(lf);
 					}
 					else{
 						lf.setText(rep.getCanonicalPath());
 					}
 				}catch(IOException e){
-					message += lf.getText() + " n'est pas un chemin valide";
-					askFolders.remove(lf);
+					message += lf.getText() + " n'est pas un chemin valide\n";
+					askFoldersCopy.remove(lf);
 				}
 			}
 		}
+		askFolders = askFoldersCopy;
 		if(!message.isEmpty()){
-			System.out.println(message);
+			System.err.println(message);
 		}
 	}
 
